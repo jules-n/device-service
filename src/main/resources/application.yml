@@ -1,6 +1,3 @@
-tenant-id:
-  attribute-key: ${TENANT_ID_ATTRIBUTE_KEY}
-
 spring:
   data:
     mongodb:
