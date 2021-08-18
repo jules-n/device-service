@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.UUID;
+
 @Data
 @Document(collection = Device.COLLECTION_NAME)
 @AllArgsConstructor
@@ -13,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Device {
     public static final String COLLECTION_NAME = "devices";
     @Indexed(unique = true)
-    private String serialNumber;
+    private UUID id;
     private String tenantId;
     private Port[] ports;
 }
