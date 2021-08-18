@@ -1,4 +1,4 @@
-package com.example.DeviceService;
+package com.ynero.ss.device_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

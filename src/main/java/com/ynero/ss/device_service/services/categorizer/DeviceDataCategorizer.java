@@ -1,4 +1,4 @@
-package com.example.DeviceService.services.categorizer;
+package com.ynero.ss.device_service.services.categorizer;
 
 import com.google.pubsub.v1.PubsubMessage;
 import lombok.extern.log4j.Log4j2;
