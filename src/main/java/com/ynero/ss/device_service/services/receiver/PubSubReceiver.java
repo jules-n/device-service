@@ -1,6 +1,6 @@
-package com.example.DeviceService.services.receiver;
+package com.ynero.ss.device_service.services.receiver;
 
-import com.example.DeviceService.services.categorizer.DeviceDataCategorizer;
+import com.ynero.ss.device_service.services.categorizer.DeviceDataCategorizer;
 import com.google.cloud.pubsub.v1.AckReplyConsumer;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Subscriber;
