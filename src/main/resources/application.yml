@@ -3,7 +3,13 @@ spring:
     mongodb:
       uri: ${URI}
       database: ${DATABASE}
-
+  cloud:
+    stream:
+      bindings:
+        input:
+          destination: ${SUBSCRIPTION:device-service-sub}
+    gcp:
+      project-id: ${PROJECT_ID:single-system}
 server:
   port: ${PORT}
 
