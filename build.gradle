@@ -7,6 +7,7 @@ plugins {
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+targetCompatibility = '11'
 
 configurations {
 	compileOnly {
@@ -16,12 +17,16 @@ configurations {
 
 repositories {
 	mavenCentral()
+	mavenLocal()
 }
 
 dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	//shared
+	implementation 'com.jules.ss:proto-files:1.0.0'
 
 	//pub/sub
 	implementation platform('com.google.cloud:libraries-bom:20.9.0')
