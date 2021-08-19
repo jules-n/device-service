@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface DeviceService {
     Device save(Device device);
-    void updateSnapshot(Device device);
+    void updateSnapshot(Port port);
     Device[] getAllRelatedDevicesByEvent(Port port);
 
 }
