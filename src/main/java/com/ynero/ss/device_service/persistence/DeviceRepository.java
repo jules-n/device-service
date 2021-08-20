@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface DeviceRepository extends MongoRepository<Device, UUID>, DeviceRepositoryExtension {
-    Optional<Device> findByDeviceId(UUID id);
+    Optional<Device> findById(UUID id);
 }
