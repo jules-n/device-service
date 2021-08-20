@@ -10,13 +10,13 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import java.util.UUID;
 
-public class DeviceRepositoryMongoExtension implements DeviceRepositoryExtension {
+public class PortRepositoryCustomImpl implements PortRepositoryCustom {
 
     @Autowired
     private MongoTemplate mongoTemplate;
 
     @Override
-    public boolean updateSnapshot(Port port, UUID deviceId) {
+    public boolean value(Port port, UUID deviceId) {
         Criteria deviceIdCriteria = new Criteria("id").is(deviceId);
         Criteria nameOfPort = new Criteria("ports.name").is(port.getName());
         Update update = new Update();
@@ -30,7 +30,7 @@ public class DeviceRepositoryMongoExtension implements DeviceRepositoryExtension
     }
 
     @Override
-    public Device[] getAllRelatedDevicesByPipelineIds(UUID pipelineId) {
+    public Device[] getAllRelatedDevicesByPipelinesId(UUID pipelineId) {
         Query query = new Query();
         query.addCriteria(Criteria.where("pipelinesId").is(pipelineId));
         var deviceList = mongoTemplate.find(query, Device.class);

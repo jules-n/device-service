@@ -8,6 +8,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface DeviceRepository extends MongoRepository<Device, UUID>, DeviceRepositoryExtension {
+public interface DeviceRepository extends MongoRepository<Device, UUID>, PortRepositoryExtension {
     Optional<Device> findById(UUID id);
 }

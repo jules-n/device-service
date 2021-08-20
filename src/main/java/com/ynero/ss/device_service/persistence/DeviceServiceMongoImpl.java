@@ -9,10 +9,13 @@ import org.springframework.context.annotation.Primary;
 import java.util.UUID;
 
 @Primary
-public class DeviceMongoService implements DeviceService {
+public class DeviceServiceMongoImpl implements DeviceService {
 
     @Autowired
     private DeviceRepository deviceRepository;
+
+    @Autowired
+    private PortRepository portRepository;
 
     @SneakyThrows
     @Override
@@ -25,13 +28,13 @@ public class DeviceMongoService implements DeviceService {
     @Override
     public void updateSnapshot(Port port, UUID deviceId) {
         if (port.getName() != null && deviceId != null)
-            deviceRepository.updateSnapshot(port, deviceId);
+            portRepository.updateSnapshot(port, deviceId);
     }
 
     @Override
-    public Device[] getAllRelatedDevicesByPipelineIds(UUID pipelineId) {
+    public Device[] getAllRelatedDevicesByPipelineId(UUID pipelineId) {
         if(pipelineId!=null)
-        return deviceRepository.getAllRelatedDevicesByPipelineIds(pipelineId);
+        return portRepository.getAllRelatedDevicesByPipelinesId(pipelineId);
         throw new IllegalArgumentException();
     }
 
@@ -43,7 +46,7 @@ public class DeviceMongoService implements DeviceService {
     @Override
     public Port addPort(Port port, UUID deviceId) {
         if (port.getName() != null && deviceId != null)
-            return deviceRepository.addPort(port, deviceId);
+            return portRepository.addPort(port, deviceId);
         throw new IllegalArgumentException();
     }
 }
