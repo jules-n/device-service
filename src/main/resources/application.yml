@@ -11,5 +11,5 @@ spring:
     gcp:
       project-id: ${PROJECT_ID:single-system}
 server:
-  port: ${PORT}
+  port: ${PORT:9093}
 
