@@ -1,5 +1,6 @@
 package com.ynero.ss.device_service.services.receiver;
 
+import com.ynero.ss.device_service.services.adapters.PubSubMessageToDeviceAdapter;
 import com.ynero.ss.device_service.services.categorizer.DeviceDataCategorizer;
 import com.google.cloud.pubsub.v1.AckReplyConsumer;
 import com.google.cloud.pubsub.v1.MessageReceiver;
@@ -23,6 +24,9 @@ public class PubSubReceiver {
     @Autowired
     private DeviceDataCategorizer deviceDataCategorizer;
 
+    @Autowired
+    private PubSubMessageToDeviceAdapter pubSubMessageToDeviceAdapter;
+
 
     @Bean
     public void asyncSubscribing() {
@@ -31,7 +35,8 @@ public class PubSubReceiver {
 
         MessageReceiver receiver =
                 (PubsubMessage pubsubMessage, AckReplyConsumer consumer) -> {
-                    deviceDataCategorizer.messageHandling(pubsubMessage);
+                    var device = pubSubMessageToDeviceAdapter.adapt(pubsubMessage);
+                    deviceDataCategorizer.categorize(device);
                     consumer.ack();
                 };
 

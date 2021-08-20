@@ -3,6 +3,7 @@ package com.ynero.ss.device_service.services.adapters;
 import com.google.pubsub.v1.PubsubMessage;
 import com.ynero.ss.device_service.domain.Device;
 import com.ynero.ss.device_service.domain.Port;
+import com.ynero.ss.device_service.persistence.DeviceService;
 import dtos.DeviceDTO;
 import json_converters.DTOToMessageJSONConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ public class PubSubMessageToDeviceAdapter {
 
     @Autowired
     private DTOToMessageJSONConverter<DeviceDTO> converter;
+
+    @Autowired
+    private DeviceService deviceService;
 
     public Device adapt(PubsubMessage pubsubMessage) {
 
