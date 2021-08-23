@@ -8,6 +8,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+
+import java.util.Arrays;
 import java.util.UUID;
 
 public class PortRepositoryCustomImpl implements PortRepositoryCustom {
@@ -16,7 +18,7 @@ public class PortRepositoryCustomImpl implements PortRepositoryCustom {
     private MongoTemplate mongoTemplate;
 
     @Override
-    public boolean value(Port port, UUID deviceId) {
+    public boolean updateSnapshot(Port port, UUID deviceId) {
         Criteria deviceIdCriteria = new Criteria("id").is(deviceId);
         Criteria nameOfPort = new Criteria("ports.name").is(port.getName());
         Update update = new Update();
@@ -27,6 +29,15 @@ public class PortRepositoryCustomImpl implements PortRepositoryCustom {
                 Device.COLLECTION_NAME
         );
         return result.wasAcknowledged();
+    }
+
+    @Override
+    public Port findSnapshot(Port port, UUID deviceId) {
+        Criteria deviceIdCriteria = new Criteria("id").is(deviceId);
+        /*Criteria nameOfPort = new Criteria("ports.name").is(port.getName());*/
+        var device = mongoTemplate.find(new Query(deviceIdCriteria), Device.class).get(0);
+        var foundPort = Arrays.stream(device.getPorts()).filter(_port -> port.getName().equals(_port)).findFirst();
+        return foundPort.get();
     }
 
     @Override

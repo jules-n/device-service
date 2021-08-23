@@ -1,8 +1,8 @@
 spring:
   data:
     mongodb:
-      uri: ${URI}
-      database: ${DATABASE}
+      uri: ${URI:mongodb://localhost:27017}
+      database: ${DATABASE:device-service}
   cloud:
     stream:
       bindings:

@@ -2,6 +2,8 @@ plugins {
 	id 'org.springframework.boot' version '2.5.3'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id "com.google.protobuf" version "0.8.17"
+	id 'com.coditory.integration-test' version '1.2.3'
 }
 
 group = 'com.example'
@@ -26,7 +28,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 	//shared
-	implementation 'com.jules.ss:proto-files:1.0.0'
+	implementation 'com.jules.ss:proto-files:1.0.14'
 	implementation 'com.jules.ss:common-dtos:1.0.2.1'
 	implementation 'com.jules.ss:converters:1.0.1'
 
@@ -42,6 +44,8 @@ dependencies {
 	implementation 'io.grpc:grpc-protobuf:1.39.0'
 	implementation 'io.grpc:grpc-stub:1.39.0'
 	implementation 'io.grpc:grpc-netty:1.39.0'
+	protobuf 'com.jules.ss:proto-files:1.0.14'
+	implementation 'com.google.protobuf:protobuf-lite:3.0.0'
 
 	//kafka
 	implementation 'org.springframework.kafka:spring-kafka'
@@ -49,10 +53,56 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.kafka:spring-kafka-test'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	testImplementation 'org.junit.jupiter:junit-jupiter-params'
+	testImplementation 'io.projectreactor:reactor-test'
+	testImplementation 'org.mockito:mockito-core'
+	testImplementation 'org.assertj:assertj-core'
+	integrationImplementation "org.testcontainers:junit-jupiter:1.15.3"
+	integrationImplementation "org.testcontainers:mongodb:1.15.3"
+
 }
 
+tasks.withType(Test) {
+	useJUnitPlatform()
+	testLogging {
+		events = ["passed", "failed", "skipped"]
+		exceptionFormat = "full"
+	}
+}
+
+
+protobuf {
+	protoc {
+		artifact = "com.google.protobuf:protoc:3.2.0"
+	}
+	plugins {
+		grpc {
+			artifact = 'io.grpc:protoc-gen-grpc-java:1.4.0'
+		}
+	}
+	generateProtoTasks {
+		all()*.plugins {
+			grpc {}
+		}
+	}
+	generatedFilesBaseDir = "$projectDir/src/main/java/com/ynero/ss/device_service/proto"
+}
+sourceSets {
+	main {
+		proto {
+			srcDir "/src/main/java/com/ynero/ss/device_service/proto"
+			srcDir "/src/main/java/com/ynero/ss/device_service/proto/grpc"
+		}
+	}
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = "sources"
+	from sourceSets.main.allSource
+}
 test {
 	useJUnitPlatform()
 }

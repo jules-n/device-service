@@ -33,8 +33,8 @@ public class DeviceServiceMongoImpl implements DeviceService {
 
     @Override
     public Device[] getAllRelatedDevicesByPipelineId(UUID pipelineId) {
-        if(pipelineId!=null)
-        return portRepository.getAllRelatedDevicesByPipelinesId(pipelineId);
+        if (pipelineId != null)
+            return portRepository.getAllRelatedDevicesByPipelinesId(pipelineId);
         throw new IllegalArgumentException();
     }
 
@@ -47,6 +47,13 @@ public class DeviceServiceMongoImpl implements DeviceService {
     public Port addPort(Port port, UUID deviceId) {
         if (port.getName() != null && deviceId != null)
             return portRepository.addPort(port, deviceId);
+        throw new IllegalArgumentException();
+    }
+
+    @Override
+    public Port getSnapshot(Port port, UUID deviceId) {
+        if (port.getName() != null && deviceId != null)
+            return portRepository.findSnapshot(port, deviceId);
         throw new IllegalArgumentException();
     }
 }

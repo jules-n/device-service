@@ -10,7 +10,8 @@ import java.util.UUID;
 public interface DeviceService {
     Device save(Device device);
     void updateSnapshot(Port port, UUID deviceId);
-    Device[] getAllRelatedDevicesByPipelineIds(UUID pipelineId);
+    Device[] getAllRelatedDevicesByPipelineId(UUID pipelineId);
     Device getDeviceById(UUID id);
     Port addPort(Port port, UUID deviceId);
+    Port getSnapshot(Port port, UUID deviceId);
 }

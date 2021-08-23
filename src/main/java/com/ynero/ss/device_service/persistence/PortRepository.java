@@ -8,8 +8,5 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface PortRepository extends MongoRepository<Port, UUID> {
-    boolean updatePortValue(Port port, UUID deviceId);
-    Device[] getAllRelatedDevicesByPortsPipelineId(UUID pipelineId);
-    Port insertPort(Port port, UUID deviceId);
+public interface PortRepository extends MongoRepository<Port, UUID>, PortRepositoryCustom {
 }
