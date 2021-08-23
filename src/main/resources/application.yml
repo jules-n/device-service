@@ -1,8 +1,8 @@
 spring:
   data:
     mongodb:
-      uri: ${URI}
-      database: ${DATABASE}
+      uri: ${URI:mongodb://localhost:27017}
+      database: ${DATABASE:device-service}
   cloud:
     stream:
       bindings:
@@ -11,5 +11,5 @@ spring:
     gcp:
       project-id: ${PROJECT_ID:single-system}
 server:
-  port: ${PORT}
+  port: ${PORT:9093}
 
