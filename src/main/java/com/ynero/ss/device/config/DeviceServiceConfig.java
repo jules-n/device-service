@@ -1,7 +1,7 @@
-package com.ynero.ss.device_service.config;
+package com.ynero.ss.device.config;
 
-import com.ynero.ss.device_service.persistence.DeviceServiceMongoImpl;
-import com.ynero.ss.device_service.persistence.DeviceService;
+import com.ynero.ss.device.persistence.DeviceServiceMongoImpl;
+import com.ynero.ss.device.persistence.DeviceService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

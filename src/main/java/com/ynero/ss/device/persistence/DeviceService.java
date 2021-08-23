@@ -1,7 +1,7 @@
-package com.ynero.ss.device_service.persistence;
+package com.ynero.ss.device.persistence;
 
-import com.ynero.ss.device_service.domain.Device;
-import com.ynero.ss.device_service.domain.Port;
+import com.ynero.ss.device.domain.Device;
+import com.ynero.ss.device.domain.Port;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

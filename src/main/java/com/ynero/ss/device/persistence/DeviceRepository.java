@@ -1,6 +1,6 @@
-package com.ynero.ss.device_service.persistence;
+package com.ynero.ss.device.persistence;
 
-import com.ynero.ss.device_service.domain.Device;
+import com.ynero.ss.device.domain.Device;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

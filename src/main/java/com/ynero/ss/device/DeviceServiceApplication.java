@@ -1,4 +1,4 @@
-package com.ynero.ss.device_service;
+package com.ynero.ss.device;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

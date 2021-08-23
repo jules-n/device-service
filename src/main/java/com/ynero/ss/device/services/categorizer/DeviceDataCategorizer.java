@@ -1,10 +1,10 @@
-package com.ynero.ss.device_service.services.categorizer;
+package com.ynero.ss.device.services.categorizer;
 
-import com.ynero.ss.device_service.domain.Device;
-import com.ynero.ss.device_service.persistence.DeviceService;
-import com.ynero.ss.device_service.proto.main.java.PipelinesMessage;
-import com.ynero.ss.device_service.services.register.DeviceDataRegister;
-import com.ynero.ss.device_service.services.sender.PipelinesgRPCSender;
+import com.ynero.ss.device.domain.Device;
+import com.ynero.ss.device.persistence.DeviceService;
+import com.ynero.ss.device.services.register.DeviceDataRegister;
+import com.ynero.ss.device.services.sender.PipelinesgRPCSender;
+import com.ynero.ss.pipeline.dto.proto.PipelinesMessage;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.ynero.ss.device_service.config;
+package com.ynero.ss.device.config;
 
 import json_converters.DTOToMessageJSONConverter;
 import org.springframework.context.annotation.Bean;

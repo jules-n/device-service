@@ -1,8 +1,8 @@
-package com.ynero.ss.device_service.services.register;
+package com.ynero.ss.device.services.register;
 
-import com.ynero.ss.device_service.domain.Device;
-import com.ynero.ss.device_service.domain.Port;
-import com.ynero.ss.device_service.persistence.DeviceService;
+import com.ynero.ss.device.domain.Device;
+import com.ynero.ss.device.domain.Port;
+import com.ynero.ss.device.persistence.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

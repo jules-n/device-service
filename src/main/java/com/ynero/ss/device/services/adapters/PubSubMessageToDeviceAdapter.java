@@ -1,9 +1,9 @@
-package com.ynero.ss.device_service.services.adapters;
+package com.ynero.ss.device.services.adapters;
 
 import com.google.pubsub.v1.PubsubMessage;
-import com.ynero.ss.device_service.domain.Device;
-import com.ynero.ss.device_service.domain.Port;
-import com.ynero.ss.device_service.persistence.DeviceService;
+import com.ynero.ss.device.domain.Device;
+import com.ynero.ss.device.domain.Port;
+import com.ynero.ss.device.persistence.DeviceService;
 import dtos.DeviceDTO;
 import json_converters.DTOToMessageJSONConverter;
 import org.springframework.beans.factory.annotation.Autowired;

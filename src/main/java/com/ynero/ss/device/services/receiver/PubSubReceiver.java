@@ -1,7 +1,7 @@
-package com.ynero.ss.device_service.services.receiver;
+package com.ynero.ss.device.services.receiver;
 
-import com.ynero.ss.device_service.services.adapters.PubSubMessageToDeviceAdapter;
-import com.ynero.ss.device_service.services.categorizer.DeviceDataCategorizer;
+import com.ynero.ss.device.services.adapters.PubSubMessageToDeviceAdapter;
+import com.ynero.ss.device.services.categorizer.DeviceDataCategorizer;
 import com.google.cloud.pubsub.v1.AckReplyConsumer;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Subscriber;

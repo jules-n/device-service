@@ -1,4 +1,4 @@
-package com.ynero.ss.device_service.domain;
+package com.ynero.ss.device.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
