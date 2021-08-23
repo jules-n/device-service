@@ -1,7 +1,7 @@
 package com.ynero.ss.device.persistence;
 
-import com.ynero.ss.device.domain.Device;
 import com.ynero.ss.device.domain.Port;
+import com.ynero.ss.device.domain.Device;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -13,5 +13,5 @@ public interface DeviceService {
     Device[] getAllRelatedDevicesByPipelineId(UUID pipelineId);
     Device getDeviceById(UUID id);
     Port addPort(Port port, UUID deviceId);
-    Port getSnapshot(Port port, UUID deviceId);
+    Port getSnapshot(String portName, UUID deviceId);
 }
