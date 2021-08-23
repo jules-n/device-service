@@ -1,16 +1,15 @@
 package com.ynero.ss.device.services.receiver;
 
-import com.ynero.ss.device.services.adapters.PubSubMessageToDeviceAdapter;
-import com.ynero.ss.device.services.categorizer.DeviceDataCategorizer;
-import com.google.cloud.pubsub.v1.AckReplyConsumer;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Subscriber;
 import com.google.pubsub.v1.ProjectSubscriptionName;
-import com.google.pubsub.v1.PubsubMessage;
+import com.ynero.ss.device.services.adapters.PubSubMessageToDeviceAdapter;
+import com.ynero.ss.device.services.categorizer.DeviceDataCategorizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
 
 @Configuration
 public class PubSubReceiver {
@@ -28,21 +27,19 @@ public class PubSubReceiver {
     private PubSubMessageToDeviceAdapter pubSubMessageToDeviceAdapter;
 
 
-    @Bean
+    @PostConstruct
     public void asyncSubscribing() {
-        ProjectSubscriptionName subscriptionName =
-                ProjectSubscriptionName.of(projectId, subscription);
+        var subscriptionName = ProjectSubscriptionName.of(projectId, subscription);
 
-        MessageReceiver receiver =
-                (PubsubMessage pubsubMessage, AckReplyConsumer consumer) -> {
-                    var device = pubSubMessageToDeviceAdapter.adapt(pubsubMessage);
-                    deviceDataCategorizer.categorize(device);
-                    consumer.ack();
-                };
+        MessageReceiver receiver = (pubsubMessage, consumer) -> {
+            var device = pubSubMessageToDeviceAdapter.adapt(pubsubMessage);
+            deviceDataCategorizer.categorize(device);
+            consumer.ack();
+        };
 
-        Subscriber subscriber = Subscriber.newBuilder(subscriptionName, receiver).build();
-            subscriber.startAsync().awaitRunning();
-            subscriber.awaitTerminated();
+        var subscriber = Subscriber.newBuilder(subscriptionName, receiver).build();
+        subscriber.startAsync().awaitRunning();
+        subscriber.awaitTerminated();
     }
 
 
