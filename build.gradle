@@ -28,7 +28,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 	//shared
-	implementation 'com.jules.ss:proto-files:1.0.14'
+	implementation "com.jules.ss:proto-files:${project['com.jules.ss.proto-files.version']}"
 	implementation 'com.jules.ss:common-dtos:1.0.2.1'
 	implementation 'com.jules.ss:converters:1.0.1'
 
@@ -44,7 +44,7 @@ dependencies {
 	implementation 'io.grpc:grpc-protobuf:1.39.0'
 	implementation 'io.grpc:grpc-stub:1.39.0'
 	implementation 'io.grpc:grpc-netty:1.39.0'
-	protobuf 'com.jules.ss:proto-files:1.0.14'
+	protobuf "com.jules.ss:proto-files:${project['com.jules.ss.proto-files.version']}"
 	implementation 'com.google.protobuf:protobuf-lite:3.0.0'
 
 	//kafka
@@ -88,21 +88,9 @@ protobuf {
 			grpc {}
 		}
 	}
-	generatedFilesBaseDir = "$projectDir/src/main/java/com/ynero/ss/device_service/proto"
-}
-sourceSets {
-	main {
-		proto {
-			srcDir "/src/main/java/com/ynero/ss/device_service/proto"
-			srcDir "/src/main/java/com/ynero/ss/device_service/proto/grpc"
-		}
-	}
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
 	classifier = "sources"
 	from sourceSets.main.allSource
-}
-test {
-	useJUnitPlatform()
 }
