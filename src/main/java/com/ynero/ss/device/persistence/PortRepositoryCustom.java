@@ -10,4 +10,5 @@ public interface PortRepositoryCustom {
     Port findSnapshot(String portName, UUID deviceId);
     Device[] getAllRelatedDevicesByPipelinesId(UUID pipelineId);
     Port addPort(Port port, UUID deviceId);
+    boolean addPipelineToPort(UUID pipelineId, String portName, UUID deviceId);
 }

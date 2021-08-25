@@ -139,4 +139,34 @@ public class DeviceServiceTest {
         var expectedDevicesWithTestedPipelineId = new Device[]{devices.get(0),devices.get(2)};
         assertThat(actualDevicesWithTestedPipelineId).containsExactlyInAnyOrder(expectedDevicesWithTestedPipelineId);
     }
+
+    @Test
+    void updateSnapshotShouldChangeValueOnSpecifiedPort(){
+        var expectedNewValue = 58;
+        var updatedDevice = devices.get(3);
+        var updatedPort = updatedDevice.getPorts()[0];
+        var newTime = LocalDateTime.now();
+        var newPortsData = new Port(updatedPort.getName(),expectedNewValue,
+                LocalDateTime.of(newTime.getYear(), newTime.getMonth(), newTime.getDayOfMonth(), newTime.getHour(), newTime.getMinute(), newTime.getSecond()),
+                updatedPort.getPipelinesId());
+        deviceService.updateSnapshot(newPortsData, updatedDevice.getId());
+        var actualPort = deviceService.getDeviceById(updatedDevice.getId()).getPorts()[0];
+        assertThat(actualPort).isEqualTo(newPortsData);
+
+    }
+
+    @Test
+    void addPipelineShouldUpdateArrayOfPipelinesIdOnSpecifiedPort(){
+        var newPipelineId = UUID.randomUUID();
+        var updatedDevice = devices.get(3);
+        var updatedPort = updatedDevice.getPorts()[0];
+        var newPipelinesIdArray = Arrays.copyOf(updatedPort.getPipelinesId(),
+                updatedPort.getPipelinesId().length+1);
+        newPipelinesIdArray[newPipelinesIdArray.length-1] = newPipelineId;
+        var expectedPipelinesIdArray = newPipelinesIdArray;
+        deviceService.addPipelineToPort(newPipelineId, updatedPort.getName(), updatedDevice.getId());
+        var actualPipelinesIdArray = deviceService.getDeviceById(updatedDevice.getId()).getPorts()[0].getPipelinesId();
+        assertThat(actualPipelinesIdArray).isEqualTo(expectedPipelinesIdArray);
+
+    }
 }

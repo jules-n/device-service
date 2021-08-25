@@ -26,11 +26,13 @@ public class PortRepositoryCustomImpl implements PortRepositoryCustom {
                 .set("ports.$.value", port.getValue())
                 .set("ports.$.lastUpdate", port.getLastUpdate());
 
-        var result = mongoTemplate.updateFirst(
-                new Query(where("id").is(deviceId)
-                        .and("ports.name").is(port.getName())),
+        final Criteria criteria = new Criteria();
+        criteria.andOperator(Criteria.where("id").is(deviceId),
+                Criteria.where("ports.name").is(port.getName()));
+
+        var result = mongoTemplate.updateFirst(new Query(criteria),
                 update,
-                Device.COLLECTION_NAME
+                Device.class
         );
         return result.wasAcknowledged();
     }
@@ -61,5 +63,21 @@ public class PortRepositoryCustomImpl implements PortRepositoryCustom {
         if (result.wasAcknowledged())
             return port;
         throw new Exception("Port cant be added");
+    }
+
+    public boolean addPipelineToPort(UUID pipelineId, String portName, UUID deviceId){
+        Update update = new Update();
+        update.addToSet("ports.$.pipelinesId", pipelineId);
+
+        final Criteria criteria = new Criteria();
+        criteria.andOperator(Criteria.where("id").is(deviceId),
+                Criteria.where("ports.name").is(portName));
+
+        var result = mongoTemplate.updateFirst(new Query(criteria),
+                update,
+                Device.class
+        );
+
+        return result.wasAcknowledged();
     }
 }

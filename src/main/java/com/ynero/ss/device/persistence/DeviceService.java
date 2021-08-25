@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
 public interface DeviceService {
     Device save(Device device);
     void updateSnapshot(Port port, UUID deviceId);
@@ -14,4 +13,5 @@ public interface DeviceService {
     Device getDeviceById(UUID id);
     Port addPort(Port port, UUID deviceId);
     Port getSnapshot(String portName, UUID deviceId);
+    boolean addPipelineToPort(UUID pipelineId, String portName, UUID deviceId);
 }
