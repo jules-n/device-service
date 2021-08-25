@@ -1,0 +1,47 @@
+Configuration:
+  status: warn
+
+  properties:
+    property:
+      - name: log-path
+        value: log
+
+  appenders:
+    Console:
+      name: console
+      PatternLayout:
+        disableAnsi: false
+        Pattern: '%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%-5level}{FATAL=bright red, ERROR=dark red, WARN=yellow, INFO=green, DEBUG=grey, TRACE=black} [%15.15t] %style{%-40.40c{1.}}{cyan} : %m%n%ex'
+      target: SYSTEM_OUT
+      follow: true
+#
+#    RollingFile:
+#      - name: file
+#        fileName: ${log-path}/sandbox-spring-boot.log
+#        filePattern: "logs/$${date:yyyy-MM}/sandbox-spring-boot-%d{MM-dd-yyyy}-%i.log.gz"
+#        PatternLayout:
+#          disableAnsi: true
+#          pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%t] %-40.40c{1.} : %m%n%xwEx"
+#        Policies:
+#          SizeBasedTriggeringPolicy:
+#            size: 10MB
+#        DefaultRollOverStrategy:
+#          max: 50
+
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+        - ref: console
+#        - ref: file
+    logger:
+      - name: com.ynero.ss
+        level: debug
+        additivity: false
+        AppenderRef:
+          - ref: console
+      - name: com.google.cloud
+        level: debug
+        additivity: false
+        AppenderRef:
+          - ref: console
