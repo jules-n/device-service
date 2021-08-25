@@ -1,14 +1,16 @@
 package com.ynero.ss.device.persistence;
 
-import com.ynero.ss.device.domain.Device;
 import com.ynero.ss.device.domain.Port;
+import com.ynero.ss.device.domain.Device;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 @Primary
+@Component
 public class DeviceServiceMongoImpl implements DeviceService {
 
     @Autowired
@@ -20,8 +22,9 @@ public class DeviceServiceMongoImpl implements DeviceService {
     @SneakyThrows
     @Override
     public Device save(Device device) {
-        if (device.getId() != null && device.getTenantId() != null)
-            deviceRepository.save(device);
+        if (device.getId() != null && device.getTenantId() != null) {
+            return deviceRepository.save(device);
+        }
         throw new Exception("Not enough data");
     }
 
@@ -51,9 +54,20 @@ public class DeviceServiceMongoImpl implements DeviceService {
     }
 
     @Override
-    public Port getSnapshot(Port port, UUID deviceId) {
-        if (port.getName() != null && deviceId != null)
-            return portRepository.findSnapshot(port, deviceId);
+    public Port getSnapshot(String portName, UUID deviceId) {
+        if (portName != null && deviceId != null)
+            return portRepository.findSnapshot(portName, deviceId);
         throw new IllegalArgumentException();
+    }
+
+    @SneakyThrows
+    @Override
+    public boolean addPipelineToPort(UUID pipelineId, String portName, UUID deviceId) {
+        if(pipelineId!=null && portName!=null){
+            if (deviceRepository.findById(deviceId)!=null) {
+                return portRepository.addPipelineToPort(pipelineId, portName, deviceId);
+            }
+        }
+        throw new Exception("Pipeline cant be added");
     }
 }

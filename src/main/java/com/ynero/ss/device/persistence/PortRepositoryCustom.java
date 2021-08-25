@@ -7,7 +7,8 @@ import java.util.UUID;
 
 public interface PortRepositoryCustom {
     boolean updateSnapshot(Port port, UUID deviceId);
-    Port findSnapshot(Port port, UUID deviceId);
+    Port findSnapshot(String portName, UUID deviceId);
     Device[] getAllRelatedDevicesByPipelinesId(UUID pipelineId);
     Port addPort(Port port, UUID deviceId);
+    boolean addPipelineToPort(UUID pipelineId, String portName, UUID deviceId);
 }

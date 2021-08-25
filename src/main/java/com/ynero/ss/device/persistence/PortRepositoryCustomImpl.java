@@ -12,6 +12,8 @@ import org.springframework.data.mongodb.core.query.Update;
 import java.util.Arrays;
 import java.util.UUID;
 
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+
 public class PortRepositoryCustomImpl implements PortRepositoryCustom {
 
     @Autowired
@@ -19,32 +21,36 @@ public class PortRepositoryCustomImpl implements PortRepositoryCustom {
 
     @Override
     public boolean updateSnapshot(Port port, UUID deviceId) {
-        Criteria deviceIdCriteria = new Criteria("id").is(deviceId);
-        Criteria nameOfPort = new Criteria("ports.name").is(port.getName());
         Update update = new Update();
-        update.set("ports.$.value", port.getValue()).set("ports.$.lastUpdate", port.getLastUpdate());
-        var result = mongoTemplate.updateFirst(
-                new Query(deviceIdCriteria.andOperator(nameOfPort)),
+        update
+                .set("ports.$.value", port.getValue())
+                .set("ports.$.lastUpdate", port.getLastUpdate());
+
+        final Criteria criteria = new Criteria();
+        criteria.andOperator(Criteria.where("id").is(deviceId),
+                Criteria.where("ports.name").is(port.getName()));
+
+        var result = mongoTemplate.updateFirst(new Query(criteria),
                 update,
-                Device.COLLECTION_NAME
+                Device.class
         );
         return result.wasAcknowledged();
     }
 
     @Override
-    public Port findSnapshot(Port port, UUID deviceId) {
-        Criteria deviceIdCriteria = new Criteria("id").is(deviceId);
-        /*Criteria nameOfPort = new Criteria("ports.name").is(port.getName());*/
-        var device = mongoTemplate.find(new Query(deviceIdCriteria), Device.class).get(0);
-        var foundPort = Arrays.stream(device.getPorts()).filter(_port -> port.getName().equals(_port)).findFirst();
-        return foundPort.get();
+    public Port findSnapshot(String portName, UUID deviceId) {
+        var foundDevice = mongoTemplate.find(new Query(where("id").is(deviceId)
+                .and("ports.name").is(portName)), Device.class).get(0);
+        var foundPort = Arrays.stream(foundDevice.getPorts())
+                .filter(port -> port.getName().equals(portName))
+                .findFirst()
+                .get();
+        return foundPort;
     }
 
     @Override
     public Device[] getAllRelatedDevicesByPipelinesId(UUID pipelineId) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("pipelinesId").is(pipelineId));
-        var deviceList = mongoTemplate.find(query, Device.class);
+        var deviceList = mongoTemplate.find(new Query(where("ports.pipelinesId").is(pipelineId)), Device.class);
         return deviceList.toArray(Device[]::new);
     }
 
@@ -53,10 +59,25 @@ public class PortRepositoryCustomImpl implements PortRepositoryCustom {
     public Port addPort(Port port, UUID deviceId) {
         Update update = new Update();
         update.addToSet("ports", port);
-        Criteria criteria = Criteria.where("id").is(deviceId);
-        var result = mongoTemplate.updateFirst(Query.query(criteria), update, Device.COLLECTION_NAME);
+        var result = mongoTemplate.updateFirst(new Query(where("id").is(deviceId)), update, Device.class);
         if (result.wasAcknowledged())
             return port;
         throw new Exception("Port cant be added");
+    }
+
+    public boolean addPipelineToPort(UUID pipelineId, String portName, UUID deviceId){
+        Update update = new Update();
+        update.addToSet("ports.$.pipelinesId", pipelineId);
+
+        final Criteria criteria = new Criteria();
+        criteria.andOperator(Criteria.where("id").is(deviceId),
+                Criteria.where("ports.name").is(portName));
+
+        var result = mongoTemplate.updateFirst(new Query(criteria),
+                update,
+                Device.class
+        );
+
+        return result.wasAcknowledged();
     }
 }

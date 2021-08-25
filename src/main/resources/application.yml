@@ -13,3 +13,9 @@ spring:
 server:
   port: ${PORT:9093}
 
+execution-service:
+  address:
+    host: ${EXECUTION_SERVICE_ADDRESS_HOST:localhost}
+    port: ${EXECUTION_SERVICE_ADDRESS_PORT:9098}
+
+enablingPubSub: false
