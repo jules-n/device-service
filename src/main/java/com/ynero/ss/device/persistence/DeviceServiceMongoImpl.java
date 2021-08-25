@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.UUID;
 
 @Primary
@@ -30,8 +32,12 @@ public class DeviceServiceMongoImpl implements DeviceService {
 
     @Override
     public void updateSnapshot(Port port, UUID deviceId) {
-        if (port.getName() != null && deviceId != null)
+        if(port.getLastUpdate()==null){
+            port.setLastUpdate(LocalDateTime.now());
+        }
+        if (port.getName() != null && deviceId != null){
             portRepository.updateSnapshot(port, deviceId);
+        }
     }
 
     @Override
@@ -48,8 +54,12 @@ public class DeviceServiceMongoImpl implements DeviceService {
 
     @Override
     public Port addPort(Port port, UUID deviceId) {
-        if (port.getName() != null && deviceId != null)
+        if(port.getLastUpdate()==null){
+            port.setLastUpdate(LocalDateTime.now());
+        }
+        if (port.getName() != null && deviceId != null){
             return portRepository.addPort(port, deviceId);
+        }
         throw new IllegalArgumentException();
     }
 
