@@ -20,6 +20,7 @@ public class PortRepositoryCustomImpl implements PortRepositoryCustom {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    // TODO: rename, do not use word "snapshot", better name would be something like "updatePortValue"
     @Override
     public boolean updateSnapshot(Port port, UUID deviceId) {
         Update update = new Update();
@@ -38,6 +39,7 @@ public class PortRepositoryCustomImpl implements PortRepositoryCustom {
         return result.wasAcknowledged();
     }
 
+    // TODO: rename, do not use word "snapshot", better name would be something like "findPort"
     @Override
     public Port findSnapshot(String portName, UUID deviceId) {
         var foundDevice = mongoTemplate.find(new Query(where("id").is(deviceId)

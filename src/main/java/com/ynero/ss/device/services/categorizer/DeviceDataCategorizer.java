@@ -2,7 +2,7 @@ package com.ynero.ss.device.services.categorizer;
 
 import com.ynero.ss.device.domain.Device;
 import com.ynero.ss.device.persistence.DeviceService;
-import com.ynero.ss.device.services.register.DeviceDataRegister;
+import com.ynero.ss.device.services.register.DeviceDataRegistrar;
 import com.ynero.ss.device.services.sender.PipelinesgRPCSender;
 import com.ynero.ss.pipeline.dto.proto.PipelinesMessage;
 import lombok.extern.log4j.Log4j2;
@@ -15,25 +15,27 @@ import java.util.UUID;
 @Service
 public class DeviceDataCategorizer {
     private final DeviceService deviceService;
-    private final DeviceDataRegister deviceDataRegister;
+    private final DeviceDataRegistrar deviceDataRegistrar;
     private final PipelinesgRPCSender pipelinesgRPCSender;
 
     @Autowired
-    public DeviceDataCategorizer(DeviceService deviceService, DeviceDataRegister deviceDataRegister,
+    public DeviceDataCategorizer(DeviceService deviceService, DeviceDataRegistrar deviceDataRegistrar,
             PipelinesgRPCSender pipelinesgRPCSender) {
         this.deviceService = deviceService;
-        this.deviceDataRegister = deviceDataRegister;
+        this.deviceDataRegistrar = deviceDataRegistrar;
         this.pipelinesgRPCSender = pipelinesgRPCSender;
     }
 
+    // TODO: more obvious signature here
+//    public void categorize(Device device, Port activePort) {
     public void categorize(Device device) {
-        var port = deviceDataRegister.register(device);
+        var port = deviceDataRegistrar.register(device);
         deviceService.updateSnapshot(port, device.getId());
         var pipelinesId = port.getPipelinesId();
-        if (pipelinesId == null) {
+        if (pipelinesId == null || pipelinesId.length == 0) {
             return;
         }
-        var query = PipelinesMessage.PipelineQuery.newBuilder();
+        var pipelineExecutionReq = PipelinesMessage.PipelineQuery.newBuilder();
 
         for (UUID pipelineId : pipelinesId) {
             var devicesOfPipeline = deviceService.getAllRelatedDevicesByPipelineId(pipelineId);
@@ -49,8 +51,8 @@ public class DeviceDataCategorizer {
                         .build();
                 pipelineDevicesMsg.addDevicesData(deviceData);
             }
-            query.addPipelineDevices(pipelineDevicesMsg.build());
+            pipelineExecutionReq.addPipelineDevices(pipelineDevicesMsg.build());
         }
-        pipelinesgRPCSender.send(query.build());
+        pipelinesgRPCSender.send(pipelineExecutionReq.build());
     }
 }

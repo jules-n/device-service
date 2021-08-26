@@ -19,9 +19,10 @@ public class PubSubMessageToDeviceAdapter {
     @Autowired
     private DeviceService deviceService;
 
-    public Device adapt(PubsubMessage pubsubMessage) {
+    // TODO:
+    public Device adapt(PubsubMessage deviceEventPubsubMessage) {
 
-        var data = pubsubMessage.getData().toStringUtf8();
+        var data = deviceEventPubsubMessage.getData().toStringUtf8();
         var deviceDTO = converter.deserialize(data,DeviceDTO.class);
         var messagePort = deviceDTO.getPort();
         var messageEvent = messagePort.getEvent();
@@ -29,7 +30,7 @@ public class PubSubMessageToDeviceAdapter {
         var portName = messagePort.getName();
         var valueForPort = messageEvent.getValue();
         var messageTimeArriving = messageEvent.getTime();
-        var tenantId = pubsubMessage.getAttributesMap().get("tenant-id");
+        var tenantId = deviceEventPubsubMessage.getAttributesMap().get("tenant-id");
         var deviceId = deviceDTO.getId();
 
         var port = Port.builder()

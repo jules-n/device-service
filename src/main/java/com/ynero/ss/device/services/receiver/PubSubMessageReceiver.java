@@ -25,6 +25,8 @@ public class PubSubMessageReceiver implements MessageReceiver {
     public void receiveMessage(PubsubMessage message, AckReplyConsumer consumer) {
         var device = pubSubMessageToDeviceAdapter.adapt(message);
         deviceDataCategorizer.categorize(device);
+        // TODO: use better signature here, more obvious
+//        deviceDataCategorizer.categorize(device, activePort);
         consumer.ack();
     }
 }

@@ -2,6 +2,7 @@ package com.ynero.ss.device.persistence;
 
 import com.ynero.ss.device.domain.Device;
 import com.ynero.ss.device.domain.Port;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.geo.Point;
-import org.springframework.data.mongodb.core.ReactiveMongoOperations;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -18,7 +19,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import reactor.test.StepVerifier;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,12 +33,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("integration-test")
 @Testcontainers
 @DirtiesContext
+@Log4j2
 public class DeviceServiceTest {
 
     public static final String MONGO_VERSION = "4.4.4";
 
     @Autowired
-    protected ReactiveMongoOperations mongo;
+    protected MongoOperations mongo;
+
+    @Autowired
+    private PortRepository portRepository;
 
     @Container
     protected static final MongoDBContainer MONGO_CONTAINER = new MongoDBContainer("mongo:" + MONGO_VERSION);
@@ -52,13 +56,9 @@ public class DeviceServiceTest {
 
     @AfterEach
     protected void cleanupAllDataInDb() {
-        StepVerifier
-                .create(mongo.getCollectionNames()
-                        .flatMap(col -> mongo.remove(new Query(), col))
-                        .collectList()
-                )
-                .expectNextCount(1L)
-                .verifyComplete();
+        mongo.getCollectionNames().forEach(collection -> {
+            mongo.remove(new Query(), collection);
+        });
     }
 
     @Autowired

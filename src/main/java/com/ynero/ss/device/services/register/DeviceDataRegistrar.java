@@ -8,37 +8,37 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 
+// TODO: refactor: move single method of this service to DeviceService
 @Service
-public class DeviceDataRegister {
+public class DeviceDataRegistrar {
 
     @Autowired
     private DeviceService deviceService;
 
+    // TODO: refactor: rename this method to more obvious name, and provide port in arguments
     public Port register(Device device){
         var deviceId = device.getId();
-        var foundDevice = deviceService.getDeviceById(deviceId);
+        var existingDevice = deviceService.getDeviceById(deviceId);
 
-        if (foundDevice == null){
+        if (existingDevice == null){
             device = deviceService.save(device);
-            foundDevice = device;
+            existingDevice = device;
         }
 
-        var currentPort = Arrays.stream(device.getPorts())
-                .filter(
-                        port -> port != null
-                )
+        var activePort = Arrays.stream(device.getPorts())
+                .filter(port -> port != null)
                 .findFirst().orElseThrow();
-        String nameOfCurrentPort = currentPort.getName();
+        String nameOfCurrentPort = activePort.getName();
 
-        var foundPort = Arrays.stream(foundDevice.getPorts())
+        var existingPort = Arrays.stream(existingDevice.getPorts())
                 .filter(
                         port -> port.getName().equals(nameOfCurrentPort)
                 )
                 .findFirst().get();
-        if (foundPort == null) {
-            foundPort = deviceService.addPort(currentPort, deviceId);
+        if (existingPort == null) {
+            existingPort = deviceService.addPort(activePort, deviceId);
         }
 
-        return foundPort;
+        return existingPort;
     }
 }
