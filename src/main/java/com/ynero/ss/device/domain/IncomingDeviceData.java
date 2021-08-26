@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class IncomingDeviceInfo {
+public class IncomingDeviceData {
     private Device incomingDevice;
     private Port activePortOnIncomingDevice;
 }
