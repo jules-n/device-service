@@ -29,6 +29,9 @@ public class DeviceDataCategorizer {
         var port = deviceDataRegister.register(device);
         deviceService.updateSnapshot(port, device.getId());
         var pipelinesId = port.getPipelinesId();
+        if (pipelinesId == null) {
+            return;
+        }
         var query = PipelinesMessage.PipelineQuery.newBuilder();
 
         for (UUID id : pipelinesId) {

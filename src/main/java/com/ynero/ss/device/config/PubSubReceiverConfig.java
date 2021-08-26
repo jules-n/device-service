@@ -1,12 +1,8 @@
-package com.ynero.ss.device.services.receiver;
+package com.ynero.ss.device.config;
 
-import com.google.cloud.pubsub.v1.AckReplyConsumer;
-import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Subscriber;
 import com.google.pubsub.v1.ProjectSubscriptionName;
-import com.google.pubsub.v1.PubsubMessage;
-import com.ynero.ss.device.services.adapters.PubSubMessageToDeviceAdapter;
-import com.ynero.ss.device.services.categorizer.DeviceDataCategorizer;
+import com.ynero.ss.device.services.receiver.PubSubMessageReceiver;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,37 +15,26 @@ import java.util.concurrent.TimeoutException;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-
 @Configuration
 @Log4j2
-public class PubSubReceiver {
-
+public class PubSubReceiverConfig {
     private Subscriber subscriber;
 
     @Setter(onMethod_ = {@Autowired}, onParam_ = {@Value("${spring.cloud.stream.bindings.input.destination}")})
     private String subscription;
 
-    @Value("${spring.cloud.gcp.project-id}")
+    @Setter(onMethod_ = {@Value("${spring.cloud.gcp.project-id}")})
     private String projectId;
 
     @Setter(onMethod_ = {@Autowired})
-    private DeviceDataCategorizer deviceDataCategorizer;
-
-    @Setter(onMethod_ = {@Autowired})
-    private PubSubMessageToDeviceAdapter pubSubMessageToDeviceAdapter;
+    private PubSubMessageReceiver pubSubMessageReceiver;
 
     @PostConstruct
     public void startPubSubSubscriber() {
         log.debug("starting pub-sub subscriber: sub={}", subscription);
         var subscriptionName = ProjectSubscriptionName.of(projectId, subscription);
 
-        MessageReceiver receiver = (PubsubMessage message, AckReplyConsumer consumer) -> {
-            /*var device = pubSubMessageToDeviceAdapter.adapt(pubsubMessage);
-            deviceDataCategorizer.categorize(device);*/
-            System.err.println(message);
-            consumer.ack();
-        };
-        subscriber = Subscriber.newBuilder(subscriptionName, receiver).build();
+        subscriber = Subscriber.newBuilder(subscriptionName, pubSubMessageReceiver).build();
         try {
             subscriber.startAsync().awaitRunning(30, SECONDS);
             log.info("pub-sub subscriber started: sub={}", subscription);
@@ -75,6 +60,4 @@ public class PubSubReceiver {
             }
         }
     }
-
-
 }

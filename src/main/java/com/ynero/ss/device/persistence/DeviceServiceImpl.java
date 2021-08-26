@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Primary
 @Component
-public class DeviceServiceMongoImpl implements DeviceService {
+public class DeviceServiceImpl implements DeviceService {
 
     @Autowired
     private DeviceRepository deviceRepository;
@@ -49,7 +49,8 @@ public class DeviceServiceMongoImpl implements DeviceService {
 
     @Override
     public Device getDeviceById(UUID id) {
-        return deviceRepository.findById(id).orElseThrow();
+        var device = deviceRepository.findById(id).orElse(null);
+        return device;
     }
 
     @Override
