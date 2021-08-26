@@ -81,7 +81,8 @@ class DeviceDataCategorizerTest {
     void categorize_DoesNotSendPipelineForExecution_WhenNoPipelinesAssociatedWithEventOnPortFound () {
         // given: what is test setup?
         // given: event on port, and there are NO any pipelines associated with this port
-        when(deviceService.findOrSave(eq(eventOnPortWithNoPipelines), eq(activePortWithNoPipelines))).thenReturn(activePortWithNoPipelines);
+        when(deviceService.findOrSave(eq(eventOnPortWithNoPipelines), eq(activePortWithNoPipelines)))
+                .thenReturn(activePortWithNoPipelines);
         // when: what action is performed?
         // when: categorize this event
         categorizer.categorize(eventOnPortWithNoPipelines, activePortWithNoPipelines);
@@ -94,7 +95,8 @@ class DeviceDataCategorizerTest {
     @Ignore
     void categorize_SavesValueOnPort_WhenEventOnPortReceived() {
         // given: event on port
-        when(deviceService.findOrSave(eq(eventOnPortWithNoPipelines), eq(activePortWithNoPipelines))).thenReturn(activePortWithNoPipelines);
+        when(deviceService.findOrSave(eq(eventOnPortWithNoPipelines), eq(activePortWithNoPipelines)))
+                .thenReturn(activePortWithNoPipelines);
         // when: categorize event
         categorizer.categorize(eventOnPortWithNoPipelines, activePortWithNoPipelines);
 
@@ -105,10 +107,14 @@ class DeviceDataCategorizerTest {
     @Test
     void categorize_BuildsAndSendsPipelineExecutionRequest_WhenOnePipelineIsAssociatedWithPortPort() {
         // given: event on port, and there is ONE pipeline associated with this port
-        when(deviceService.findOrSave(eq(eventOnPortWithPipelines), eq(activePortWithPipelines))).thenReturn(activePortWithPipelines);
-        when(deviceService.getPort(eq(activePortWithPipelines.getName()),eq(eventOnPortWithPipelines.getId()))).thenReturn(activePortWithPipelines);
-        when(deviceService.getAllRelatedDevicesByPipelineId(eq(activePortWithPipelines.getPipelinesId().get(0)))).thenReturn(Collections.singletonList(eventOnPortWithPipelines));
-        when(deviceService.getAllRelatedDevicesByPipelineId(eq(activePortWithPipelines.getPipelinesId().get(1)))).thenReturn(Collections.singletonList(eventOnPortWithPipelines));
+        when(deviceService.findOrSave(eq(eventOnPortWithPipelines), eq(activePortWithPipelines)))
+                .thenReturn(activePortWithPipelines);
+        when(deviceService.getPort(eq(activePortWithPipelines.getName()),eq(eventOnPortWithPipelines.getId())))
+                .thenReturn(activePortWithPipelines);
+        when(deviceService.getAllRelatedDevicesByPipelineId(eq(activePortWithPipelines.getPipelinesId().get(0))))
+                .thenReturn(Collections.singletonList(eventOnPortWithPipelines));
+        when(deviceService.getAllRelatedDevicesByPipelineId(eq(activePortWithPipelines.getPipelinesId().get(1))))
+                .thenReturn(Collections.singletonList(eventOnPortWithPipelines));
 
         // when: categorize this event
         categorizer.categorize(eventOnPortWithPipelines, activePortWithPipelines);
