@@ -4,7 +4,7 @@ import com.google.pubsub.v1.PubsubMessage;
 import com.ynero.ss.device.domain.Device;
 import com.ynero.ss.device.domain.IncomingDeviceData;
 import com.ynero.ss.device.domain.Port;
-import com.ynero.ss.device.persistence.DeviceService;
+import com.ynero.ss.device.persistence.service.DeviceService;
 import dtos.DeviceDTO;
 import json_converters.DTOToMessageJSONConverter;
 import lombok.Setter;
