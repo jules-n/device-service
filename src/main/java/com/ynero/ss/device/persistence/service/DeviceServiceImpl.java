@@ -1,7 +1,8 @@
-package com.ynero.ss.device.persistence;
+package com.ynero.ss.device.persistence.service;
 
 import com.ynero.ss.device.domain.Device;
 import com.ynero.ss.device.domain.Port;
+import com.ynero.ss.device.persistence.repository.DeviceRepository;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -18,9 +19,6 @@ public class DeviceServiceImpl implements DeviceService {
     @Autowired
     private DeviceRepository deviceRepository;
 
-    @Autowired
-    private PortRepository portRepository;
-
     @SneakyThrows
     @Override
     public Device save(Device device) {
@@ -30,20 +28,49 @@ public class DeviceServiceImpl implements DeviceService {
         throw new Exception("Not enough data");
     }
 
+    @SneakyThrows
     @Override
-    public void updateSnapshot(Port port, UUID deviceId) {
+    public Port findOrSave(Device device, Port activePort) {
+        var deviceId = device.getId();
+        var existingDevice = getDeviceById(deviceId);
+
+        if (existingDevice == null){
+            existingDevice = save(device);
+        }
+
+        String nameOfCurrentPort = activePort.getName();
+
+        var existingPort = existingDevice.getPorts().stream()
+                .filter(
+                        port -> port.getName().equals(nameOfCurrentPort)
+                )
+                .findFirst().get();
+
+        if (existingPort == null) {
+            existingPort = addPort(activePort, deviceId);
+        }
+        else {
+            updatePortValue(activePort, deviceId);
+            existingPort.setLastUpdate(activePort.getLastUpdate());
+            existingPort.setValue(activePort.getValue());
+        }
+        return existingPort;
+    }
+
+    @Override
+    public void updatePortValue(Port port, UUID deviceId) {
         if(port.getLastUpdate()==null){
             port.setLastUpdate(LocalDateTime.now());
         }
         if (port.getName() != null && deviceId != null){
-            portRepository.updateSnapshot(port, deviceId);
+            deviceRepository.updatePortValue(port, deviceId);
         }
     }
 
     @Override
     public List<Device> getAllRelatedDevicesByPipelineId(UUID pipelineId) {
         if (pipelineId != null)
-            return portRepository.getAllRelatedDevicesByPipelinesId(pipelineId);
+            return deviceRepository.getAllRelatedDevicesByPipelinesId(pipelineId);
         throw new IllegalArgumentException();
     }
 
@@ -59,15 +86,15 @@ public class DeviceServiceImpl implements DeviceService {
             port.setLastUpdate(LocalDateTime.now());
         }
         if (port.getName() != null && deviceId != null){
-            return portRepository.addPort(port, deviceId);
+            return deviceRepository.addPort(port, deviceId);
         }
         throw new IllegalArgumentException();
     }
 
     @Override
-    public Port getSnapshot(String portName, UUID deviceId) {
+    public Port getPort(String portName, UUID deviceId) {
         if (portName != null && deviceId != null)
-            return portRepository.findSnapshot(portName, deviceId);
+            return deviceRepository.findPort(portName, deviceId);
         throw new IllegalArgumentException();
     }
 
@@ -76,7 +103,7 @@ public class DeviceServiceImpl implements DeviceService {
     public boolean addPipelineToPort(UUID pipelineId, String portName, UUID deviceId) {
         if(pipelineId!=null && portName!=null){
             if (deviceRepository.findById(deviceId)!=null) {
-                return portRepository.addPipelineToPort(pipelineId, portName, deviceId);
+                return deviceRepository.addPipelineToPort(pipelineId, portName, deviceId);
             }
         }
         throw new Exception("Pipeline cant be added");

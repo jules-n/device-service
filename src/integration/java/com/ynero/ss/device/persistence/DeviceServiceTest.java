@@ -2,6 +2,7 @@ package com.ynero.ss.device.persistence;
 
 import com.ynero.ss.device.domain.Device;
 import com.ynero.ss.device.domain.Port;
+import com.ynero.ss.device.persistence.service.DeviceService;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +43,7 @@ public class DeviceServiceTest {
     protected MongoOperations mongo;
 
     @Autowired
-    private PortRepository portRepository;
+    private DeviceService deviceService;
 
     @Container
     protected static final MongoDBContainer MONGO_CONTAINER = new MongoDBContainer("mongo:" + MONGO_VERSION);
@@ -61,9 +62,6 @@ public class DeviceServiceTest {
         });
     }
 
-    @Autowired
-    private DeviceService deviceService;
-
     private List<Device> devices;
     private UUID testedPipelineId;
 
@@ -72,34 +70,51 @@ public class DeviceServiceTest {
         testedPipelineId = UUID.fromString("6698d204-af19-4524-b3c6-53c907aa8b58");
         devices = new ArrayList<>() {{
             add(new Device(UUID.randomUUID(), "SubWay",
-                    new Port[]{
-                            new Port("temperature", 25,
-                                    LocalDateTime.of(2021, 8, 22, 22, 59, 12),
-                                    new UUID[]{UUID.randomUUID(), testedPipelineId, UUID.randomUUID()}),
-                            new Port("humidity", 65,
-                                    LocalDateTime.of(2021, 8, 6, 14, 20, 13),
-                                    new UUID[]{UUID.randomUUID()}),
-                            new Port("err", "Bad connection",
-                                    LocalDateTime.of(2021, 2, 13, 22, 2, 17),
-                                    null)}));
+                    new ArrayList<Port>() {{
+                        add(new Port("temperature", 25,
+                                LocalDateTime.of(2021, 8, 22, 22, 59, 12),
+                                new ArrayList<UUID>() {{
+                                    add(UUID.randomUUID());
+                                    add(testedPipelineId);
+                                    add(UUID.randomUUID());
+                                }}));
+                        add(new Port("humidity", 65,
+                                LocalDateTime.of(2021, 8, 6, 14, 20, 13),
+                                new ArrayList<UUID>() {{
+                                    add(UUID.randomUUID());
+                                }}));
+                        add(new Port("err", "Bad connection",
+                                LocalDateTime.of(2021, 2, 13, 22, 2, 17),
+                                null));
+                    }}));
             add(new Device(UUID.randomUUID(), "MARVEL",
-                    new Port[]{
-                            new Port("battery", 10,
-                                    LocalDateTime.of(2021,8,23,17,40,22),
-                                    null)}));
+                    new ArrayList<Port>() {{
+                        add(new Port("battery", 10,
+                                LocalDateTime.of(2021, 8, 23, 17, 40, 22),
+                                null));
+                    }}));
             add(new Device(UUID.randomUUID(), "Subway",
-                    new Port[]{
-                            new Port("temperature", 39,
-                                    LocalDateTime.of(2021, 8, 21, 13, 12, 15),
-                                    new UUID[]{testedPipelineId, UUID.randomUUID()}),
-                            new Port("humidity", 91,
-                                    LocalDateTime.of(2021, 8, 16, 15, 22, 15),
-                                    new UUID[]{UUID.randomUUID()})}));
+                    new ArrayList<Port>() {{
+                        add(new Port("temperature", 39,
+                                LocalDateTime.of(2021, 8, 21, 13, 12, 15),
+                                new ArrayList<UUID>() {{
+                                    add(testedPipelineId);
+                                    add(UUID.randomUUID());
+                                }}));
+                        add(new Port("humidity", 91,
+                                LocalDateTime.of(2021, 8, 16, 15, 22, 15),
+                                new ArrayList<UUID>() {{
+                                    add(UUID.randomUUID());
+                                }}));
+                    }}));
             add(new Device(UUID.randomUUID(), "SubWay",
-                    new Port[]{
-                            new Port("humidity", 77,
-                                    LocalDateTime.of(2021, 8, 23, 14, 20, 13),
-                                    new UUID[]{UUID.randomUUID()})}));
+                    new ArrayList<Port>() {{
+                        add(new Port("humidity", 77,
+                                LocalDateTime.of(2021, 8, 23, 14, 20, 13),
+                                new ArrayList<UUID>() {{
+                                    add(UUID.randomUUID());
+                                }}));
+                    }}));
         }};
 
         for (Device device : devices) {
@@ -115,57 +130,58 @@ public class DeviceServiceTest {
     }
 
     @Test
-    void assertThatNewPortAdded(){
+    void assertThatNewPortAdded() {
         var idOfFirstDevice = devices.get(0).getId();
-        var newPort = new Port("gps", new Point(11.0f,15.0f),LocalDateTime.now(),null);
+        var newPort = new Port("gps", new Point(11.0f, 15.0f), LocalDateTime.now(), null);
         deviceService.addPort(newPort, idOfFirstDevice);
-        var expectedListOfPortsName = Arrays.stream(deviceService.getDeviceById(idOfFirstDevice).getPorts()).map(port -> port.getName());
+        var expectedListOfPortsName = deviceService
+                .getDeviceById(idOfFirstDevice)
+                .getPorts().stream().
+                        map(port -> port.getName());
         assertThat(expectedListOfPortsName).contains(newPort.getName());
 
     }
 
     @Test
-    void getSnapshotShouldReturnCorrectDataForDevice(){
+    void getSnapshotShouldReturnCorrectDataForDevice() {
         var idOfThirdDevice = devices.get(3).getId();
-        var nameOfFirstPortOfThirdDevice = devices.get(3).getPorts()[0].getName();
-        var expectedValueOfFirstPortOfThirdDevice = devices.get(3).getPorts()[0].getValue();
-        var actualValueOfFirstPortOfThirdDevice =  deviceService.getSnapshot(nameOfFirstPortOfThirdDevice, idOfThirdDevice).getValue();
+        var nameOfFirstPortOfThirdDevice = devices.get(3).getPorts().get(0).getName();
+        var expectedValueOfFirstPortOfThirdDevice = devices.get(3).getPorts().get(0).getValue();
+        var actualValueOfFirstPortOfThirdDevice = deviceService.getPort(nameOfFirstPortOfThirdDevice, idOfThirdDevice).getValue();
         assertThat(actualValueOfFirstPortOfThirdDevice).isEqualTo(expectedValueOfFirstPortOfThirdDevice);
     }
 
     @Test
-    void getAllRelatedDevicesByPipelineIdShouldReturnAllDevicesWithSpecifiedPipeline(){
+    void getAllRelatedDevicesByPipelineIdShouldReturnAllDevicesWithSpecifiedPipeline() {
         var actualDevicesWithTestedPipelineId = deviceService.getAllRelatedDevicesByPipelineId(testedPipelineId);
-        var expectedDevicesWithTestedPipelineId = new Device[]{devices.get(0),devices.get(2)};
+        var expectedDevicesWithTestedPipelineId = new Device[]{devices.get(0), devices.get(2)};
         assertThat(actualDevicesWithTestedPipelineId).containsExactlyInAnyOrder(expectedDevicesWithTestedPipelineId);
     }
 
     @Test
-    void updateSnapshotShouldChangeValueOnSpecifiedPort(){
+    void updateSnapshotShouldChangeValueOnSpecifiedPort() {
         var expectedNewValue = 58;
         var updatedDevice = devices.get(3);
-        var updatedPort = updatedDevice.getPorts()[0];
+        var updatedPort = updatedDevice.getPorts().get(0);
         var newTime = LocalDateTime.now();
-        var newPortsData = new Port(updatedPort.getName(),expectedNewValue,
+        var newPortsData = new Port(updatedPort.getName(), expectedNewValue,
                 LocalDateTime.of(newTime.getYear(), newTime.getMonth(), newTime.getDayOfMonth(), newTime.getHour(), newTime.getMinute(), newTime.getSecond()),
                 updatedPort.getPipelinesId());
-        deviceService.updateSnapshot(newPortsData, updatedDevice.getId());
-        var actualPort = deviceService.getDeviceById(updatedDevice.getId()).getPorts()[0];
+        deviceService.updatePortValue(newPortsData, updatedDevice.getId());
+        var actualPort = deviceService.getDeviceById(updatedDevice.getId()).getPorts().get(0);
         assertThat(actualPort).isEqualTo(newPortsData);
 
     }
 
     @Test
-    void addPipelineShouldUpdateArrayOfPipelinesIdOnSpecifiedPort(){
+    void addPipelineShouldUpdateArrayOfPipelinesIdOnSpecifiedPort() {
         var newPipelineId = UUID.randomUUID();
         var updatedDevice = devices.get(3);
-        var updatedPort = updatedDevice.getPorts()[0];
-        var newPipelinesIdArray = Arrays.copyOf(updatedPort.getPipelinesId(),
-                updatedPort.getPipelinesId().length+1);
-        newPipelinesIdArray[newPipelinesIdArray.length-1] = newPipelineId;
-        var expectedPipelinesIdArray = newPipelinesIdArray;
+        var updatedPort = updatedDevice.getPorts().get(0);
+        var expectedPipelinesIdArray = updatedPort.getPipelinesId();
+        expectedPipelinesIdArray.add(newPipelineId);
         deviceService.addPipelineToPort(newPipelineId, updatedPort.getName(), updatedDevice.getId());
-        var actualPipelinesIdArray = deviceService.getDeviceById(updatedDevice.getId()).getPorts()[0].getPipelinesId();
+        var actualPipelinesIdArray = deviceService.getDeviceById(updatedDevice.getId()).getPorts().get(0).getPipelinesId();
         assertThat(actualPipelinesIdArray).isEqualTo(expectedPipelinesIdArray);
 
     }
