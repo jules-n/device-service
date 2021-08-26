@@ -1,14 +1,14 @@
 package com.ynero.ss.device.persistence;
 
-import com.ynero.ss.device.domain.Port;
 import com.ynero.ss.device.domain.Device;
+import com.ynero.ss.device.domain.Port;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Primary
@@ -41,7 +41,7 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public Device[] getAllRelatedDevicesByPipelineId(UUID pipelineId) {
+    public List<Device> getAllRelatedDevicesByPipelineId(UUID pipelineId) {
         if (pipelineId != null)
             return portRepository.getAllRelatedDevicesByPipelinesId(pipelineId);
         throw new IllegalArgumentException();

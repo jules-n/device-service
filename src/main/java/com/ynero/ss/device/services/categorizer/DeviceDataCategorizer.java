@@ -14,18 +14,19 @@ import java.util.UUID;
 @Log4j2
 @Service
 public class DeviceDataCategorizer {
+    private final DeviceService deviceService;
+    private final DeviceDataRegister deviceDataRegister;
+    private final PipelinesgRPCSender pipelinesgRPCSender;
 
     @Autowired
-    private DeviceService deviceService;
-
-    @Autowired
-    private DeviceDataRegister deviceDataRegister;
-
-    @Autowired
-    private PipelinesgRPCSender pipelinesgRPCSender;
+    public DeviceDataCategorizer(DeviceService deviceService, DeviceDataRegister deviceDataRegister,
+            PipelinesgRPCSender pipelinesgRPCSender) {
+        this.deviceService = deviceService;
+        this.deviceDataRegister = deviceDataRegister;
+        this.pipelinesgRPCSender = pipelinesgRPCSender;
+    }
 
     public void categorize(Device device) {
-
         var port = deviceDataRegister.register(device);
         deviceService.updateSnapshot(port, device.getId());
         var pipelinesId = port.getPipelinesId();
@@ -34,20 +35,21 @@ public class DeviceDataCategorizer {
         }
         var query = PipelinesMessage.PipelineQuery.newBuilder();
 
-        for (UUID id : pipelinesId) {
-            Device[] devices = deviceService.getAllRelatedDevicesByPipelineId(id);
-            var pipelineDevices = PipelinesMessage.PipelineDevices.newBuilder();
-            pipelineDevices.setPipelineId(id.toString());
-            for (Device _device : devices) {
-                var valueOfSearchingPortForCurrentDevice = deviceService.getSnapshot(port.getName(), device.getId()).getValue();
+        for (UUID pipelineId : pipelinesId) {
+            var devicesOfPipeline = deviceService.getAllRelatedDevicesByPipelineId(pipelineId);
+            var pipelineDevicesMsg = PipelinesMessage.PipelineDevices.newBuilder();
+            pipelineDevicesMsg.setPipelineId(pipelineId.toString());
+            for (Device deviceOfPipeline : devicesOfPipeline) {
+                var valueOfSearchingPortForCurrentDevice = deviceService.getSnapshot(port.getName(), deviceOfPipeline.getId())
+                        .getValue();
                 var deviceData = PipelinesMessage.DeviceData.newBuilder()
-                        .setDeviceId(_device.getId().toString())
+                        .setDeviceId(deviceOfPipeline.getId().toString())
                         .setPort(port.getName())
                         .setValue(valueOfSearchingPortForCurrentDevice.toString())
                         .build();
-                pipelineDevices.addDevicesData(deviceData);
+                pipelineDevicesMsg.addDevicesData(deviceData);
             }
-            query.addPipelineDevices(pipelineDevices.build());
+            query.addPipelineDevices(pipelineDevicesMsg.build());
         }
         pipelinesgRPCSender.send(query.build());
     }

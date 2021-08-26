@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
@@ -49,9 +50,8 @@ public class PortRepositoryCustomImpl implements PortRepositoryCustom {
     }
 
     @Override
-    public Device[] getAllRelatedDevicesByPipelinesId(UUID pipelineId) {
-        var deviceList = mongoTemplate.find(new Query(where("ports.pipelinesId").is(pipelineId)), Device.class);
-        return deviceList.toArray(Device[]::new);
+    public List<Device> getAllRelatedDevicesByPipelinesId(UUID pipelineId) {
+        return mongoTemplate.find(new Query(where("ports.pipelinesId").is(pipelineId)), Device.class);
     }
 
     @SneakyThrows
