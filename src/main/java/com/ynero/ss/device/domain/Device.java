@@ -1,9 +1,13 @@
 package com.ynero.ss.device.domain;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -16,5 +20,5 @@ public class Device {
     @Indexed(unique = true)
     private UUID id;
     private String tenantId;
-    private Port[] ports;
+    private List<Port> ports;
 }

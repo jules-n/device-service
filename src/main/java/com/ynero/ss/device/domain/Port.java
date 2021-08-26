@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -13,9 +14,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class Port {
-
     private String name;
     private Object value;
     private LocalDateTime lastUpdate;
-    private UUID[] pipelinesId;
+    private List<UUID> pipelinesId;
 }
