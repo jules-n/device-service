@@ -1,6 +1,6 @@
 package com.ynero.ss.device.controllers;
 
-import com.ynero.ss.device.persistence.DeviceService;
+import com.ynero.ss.device.persistence.service.DeviceService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

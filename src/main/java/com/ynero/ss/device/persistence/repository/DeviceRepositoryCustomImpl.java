@@ -1,4 +1,4 @@
-package com.ynero.ss.device.persistence;
+package com.ynero.ss.device.persistence.repository;
 
 import com.ynero.ss.device.domain.Device;
 import com.ynero.ss.device.domain.Port;
@@ -8,21 +8,18 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
-public class PortRepositoryCustomImpl implements PortRepositoryCustom {
+public class DeviceRepositoryCustomImpl implements DeviceRepositoryCustom {
 
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    // TODO: rename, do not use word "snapshot", better name would be something like "updatePortValue"
     @Override
-    public boolean updateSnapshot(Port port, UUID deviceId) {
+    public boolean updatePortValue(Port port, UUID deviceId) {
         Update update = new Update();
         update
                 .set("ports.$.value", port.getValue())
@@ -39,16 +36,15 @@ public class PortRepositoryCustomImpl implements PortRepositoryCustom {
         return result.wasAcknowledged();
     }
 
-    // TODO: rename, do not use word "snapshot", better name would be something like "findPort"
     @Override
-    public Port findSnapshot(String portName, UUID deviceId) {
+    public Port findPort(String portName, UUID deviceId) {
         var foundDevice = mongoTemplate.find(new Query(where("id").is(deviceId)
                 .and("ports.name").is(portName)), Device.class).get(0);
-        var foundPort = Arrays.stream(foundDevice.getPorts())
+        var neededPort = foundDevice.getPorts().stream()
                 .filter(port -> port.getName().equals(portName))
                 .findFirst()
                 .get();
-        return foundPort;
+        return neededPort;
     }
 
     @Override
@@ -67,6 +63,7 @@ public class PortRepositoryCustomImpl implements PortRepositoryCustom {
         throw new Exception("Port cant be added");
     }
 
+    @Override
     public boolean addPipelineToPort(UUID pipelineId, String portName, UUID deviceId){
         Update update = new Update();
         update.addToSet("ports.$.pipelinesId", pipelineId);
