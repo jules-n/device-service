@@ -18,8 +18,10 @@ public class DeviceDataRegister {
         var deviceId = device.getId();
         var foundDevice = deviceService.getDeviceById(deviceId);
 
-        if (foundDevice == null)
+        if (foundDevice == null){
             device = deviceService.save(device);
+            foundDevice = device;
+        }
 
         var currentPort = Arrays.stream(device.getPorts())
                 .filter(

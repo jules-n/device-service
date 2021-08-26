@@ -1,4 +1,4 @@
-/*
+
 package com.ynero.ss.device.services.sender;
 
 import com.ynero.ss.pipeline.dto.proto.PipelinesMessage;
@@ -27,4 +27,3 @@ public class PipelinesgRPCSender {
         channel.shutdown();
     }
 }
-*/
