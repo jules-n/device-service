@@ -1,5 +1,5 @@
 
-package com.ynero.ss.device.services.sender;
+package com.ynero.ss.device.services.sender.execution;
 
 import com.ynero.ss.pipeline.dto.proto.PipelinesMessage;
 import com.ynero.ss.pipeline.grpc.PipelineQueryReceiverServiceGrpc;
@@ -25,17 +25,9 @@ public class PipelinesgRPCSender {
         ManagedChannel channel = ManagedChannelBuilder.forAddress(executionServiceHost, executionServicePort)
                 .usePlaintext()
                 .build();
-        channel.getState(true);
         var receiverServiceGrpcBlockingStub = PipelineQueryReceiverServiceGrpc.newBlockingStub(channel);
 
-        try {
-            receiverServiceGrpcBlockingStub.receive(request);
-        } catch (StatusRuntimeException e) {
-            log.info("RPC failed: {}", e.getStatus());
-            return;
-        } finally {
-            channel.shutdown();
-        }
-
+        receiverServiceGrpcBlockingStub.receive(request);
+        channel.shutdownNow();
     }
 }
