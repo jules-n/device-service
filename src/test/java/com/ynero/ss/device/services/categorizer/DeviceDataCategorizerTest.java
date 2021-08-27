@@ -3,7 +3,7 @@ package com.ynero.ss.device.services.categorizer;
 import com.ynero.ss.device.domain.Device;
 import com.ynero.ss.device.domain.Port;
 import com.ynero.ss.device.persistence.service.DeviceService;
-import com.ynero.ss.device.services.sender.PipelinesgRPCSender;
+import com.ynero.ss.device.services.sender.execution.PipelinesgRPCSender;
 import com.ynero.ss.pipeline.dto.proto.PipelinesMessage;
 import lombok.extern.log4j.Log4j2;
 import org.junit.Ignore;
@@ -140,6 +140,7 @@ class DeviceDataCategorizerTest {
 
         // and: correct tenantId is set
         // TODO: update this test when DTO model is updated to include tenantId
+        assertThat(actualOutgoingPipelineMsg.getTenantId()).isEqualTo(tenantId);
 
         // and: two pipelines are included
         assertThat(actualOutgoingPipelineMsg.getPipelineDevicesList())

@@ -20,7 +20,7 @@ dependencies {
 
     //shared
     implementation "com.jules.ss:proto-files:${project['com.jules.ss.proto-files.version']}"
-    implementation 'com.jules.ss:common-dtos:1.0.2.1'
+    implementation 'com.jules.ss:common-dtos:1.0.3.1'
     implementation 'com.jules.ss:converters:1.0.1'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
