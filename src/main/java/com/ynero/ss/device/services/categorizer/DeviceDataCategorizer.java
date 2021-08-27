@@ -46,7 +46,9 @@ public class DeviceDataCategorizer {
                 pipelineDevicesMsg.addDevicesData(deviceData);
             }
             pipelineExecutionReq.addPipelineDevices(pipelineDevicesMsg.build());
+            pipelineExecutionReq.setTenantId(device.getTenantId());
         }
-        pipelinesgRPCSender.send(pipelineExecutionReq.build());
+        var pipelineQuery = pipelineExecutionReq.build();
+        pipelinesgRPCSender.send(pipelineQuery);
     }
 }

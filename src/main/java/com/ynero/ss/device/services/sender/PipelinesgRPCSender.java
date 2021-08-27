@@ -5,10 +5,13 @@ import com.ynero.ss.pipeline.dto.proto.PipelinesMessage;
 import com.ynero.ss.pipeline.grpc.PipelineQueryReceiverServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.StatusRuntimeException;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+@Log4j2
 @Service
 public class PipelinesgRPCSender {
 
@@ -22,8 +25,17 @@ public class PipelinesgRPCSender {
         ManagedChannel channel = ManagedChannelBuilder.forAddress(executionServiceHost, executionServicePort)
                 .usePlaintext()
                 .build();
+        channel.getState(true);
         var receiverServiceGrpcBlockingStub = PipelineQueryReceiverServiceGrpc.newBlockingStub(channel);
-        receiverServiceGrpcBlockingStub.receive(request);
-        channel.shutdown();
+
+        try {
+            receiverServiceGrpcBlockingStub.receive(request);
+        } catch (StatusRuntimeException e) {
+            log.info("RPC failed: {}", e.getStatus());
+            return;
+        } finally {
+            channel.shutdown();
+        }
+
     }
 }

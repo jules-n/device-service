@@ -118,7 +118,10 @@ class DeviceDataCategorizerTest {
 
         // when: categorize this event
         categorizer.categorize(eventOnPortWithPipelines, activePortWithPipelines);
+
         // then: pipeline execution request for single pipeline is sent out
         verify(pipelinesgRPCSender, times(1)).send(any());
+
+        //and:
     }
 }
