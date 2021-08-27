@@ -4,11 +4,14 @@ import com.ynero.ss.device.domain.Device;
 import com.ynero.ss.device.domain.Port;
 import com.ynero.ss.device.persistence.service.DeviceService;
 import com.ynero.ss.device.services.sender.PipelinesgRPCSender;
+import com.ynero.ss.pipeline.dto.proto.PipelinesMessage;
 import lombok.extern.log4j.Log4j2;
 import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,8 +19,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -38,21 +43,27 @@ class DeviceDataCategorizerTest {
     @InjectMocks
     private DeviceDataCategorizer categorizer;
 
+    @Captor
+    ArgumentCaptor<PipelinesMessage.PipelineQuery> pipelineMsgCaptor;
+
     private UUID deviceId = UUID.randomUUID();
     private String tenantId = "test-tenant-id";
     private String activePortName = "test-active-port-name";
-    private String eventValue = "36.6";
+    private String activePortValue = "36.6";
     private Port activePortWithNoPipelines;
     private Device eventOnPortWithNoPipelines;
     private Port activePortWithPipelines;
     private Device eventOnPortWithPipelines;
+    private UUID pipelineId_1 = UUID.randomUUID();
+    private UUID pipelineId_2 = UUID.randomUUID();
 
     @BeforeEach
     void setup() {
+        // no pipelines
         activePortWithNoPipelines = Port.builder()
                 .name(activePortName)
                 .lastUpdate(LocalDateTime.now())
-                .value(eventValue)
+                .value(activePortValue)
                 .pipelinesId(new ArrayList<UUID>())
                 .build();
         eventOnPortWithNoPipelines = Device.builder()
@@ -60,21 +71,19 @@ class DeviceDataCategorizerTest {
                 .tenantId(tenantId)
                 .ports(new ArrayList<Port>(){{add(activePortWithNoPipelines);}})
                 .build();
+
+        // no pipelines
         activePortWithPipelines = Port.builder()
                 .name(activePortName)
                 .lastUpdate(LocalDateTime.now())
-                .value(eventValue)
-                .pipelinesId(new ArrayList<UUID>(){{
-                    add(UUID.randomUUID());
-                    add(UUID.randomUUID());
-                }})
+                .value(activePortValue)
+                .pipelinesId(List.of(pipelineId_1, pipelineId_2))
                 .build();
         eventOnPortWithPipelines = Device.builder()
                 .id(deviceId)
                 .tenantId(tenantId)
                 .ports(new ArrayList<Port>(){{add(activePortWithPipelines);}})
                 .build();
-
     }
 
     @Test
@@ -105,6 +114,7 @@ class DeviceDataCategorizerTest {
     }
 
     @Test
+    @SuppressWarnings("Convert2MethodRef")
     void categorize_BuildsAndSendsPipelineExecutionRequest_WhenOnePipelineIsAssociatedWithPortPort() {
         // given: event on port, and there is ONE pipeline associated with this port
         when(deviceService.findOrSave(eq(eventOnPortWithPipelines), eq(activePortWithPipelines)))
@@ -120,8 +130,32 @@ class DeviceDataCategorizerTest {
         categorizer.categorize(eventOnPortWithPipelines, activePortWithPipelines);
 
         // then: pipeline execution request for single pipeline is sent out
-        verify(pipelinesgRPCSender, times(1)).send(any());
+        verify(pipelinesgRPCSender, times(1)).send(pipelineMsgCaptor.capture());
 
-        //and:
+        // and: pipeline msg has two pipelines
+        var actualOutgoingPipelineMsg = pipelineMsgCaptor.getValue();
+        assertThat(actualOutgoingPipelineMsg).isNotNull();
+        assertThat(actualOutgoingPipelineMsg.getPipelineDevicesCount())
+                .isEqualTo(2);
+
+        // and: correct tenantId is set
+        // TODO: update this test when DTO model is updated to include tenantId
+
+        // and: two pipelines are included
+        assertThat(actualOutgoingPipelineMsg.getPipelineDevicesList())
+                .map(PipelinesMessage.PipelineDevices::getPipelineId)
+                .containsExactlyInAnyOrder(pipelineId_1.toString(), pipelineId_2.toString());
+
+        // and: correct port name is set
+        assertThat(actualOutgoingPipelineMsg.getPipelineDevicesList())
+                .flatMap(devicesData -> devicesData.getDevicesDataList())
+                .map(data -> data.getPort())
+                .containsOnly(activePortName);
+
+        // and: port value is set correctly
+        assertThat(actualOutgoingPipelineMsg.getPipelineDevicesList())
+                .flatMap(devices -> devices.getDevicesDataList())
+                .map(data -> data.getValue())
+                .containsOnly(activePortValue);
     }
 }
