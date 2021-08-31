@@ -1,8 +1,8 @@
 package com.ynero.ss.device.config;
 
-import com.google.cloud.pubsub.v1.Subscriber;
-import com.google.pubsub.v1.ProjectSubscriptionName;
-import com.ynero.ss.device.services.receiver.PubSubMessageReceiver;
+import com.ynero.ss.device.services.receiver.EventsPubSubMessageReceiver;
+import com.ynero.ss.device.services.receiver.PipelinePubSubMessageReceiver;
+import com.ynero.ss.device.services.receiver.PubSubReceiver;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,53 +11,41 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.concurrent.TimeoutException;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Configuration
 @Log4j2
 public class PubSubReceiverConfig {
-    private Subscriber subscriber;
 
-    @Setter(onMethod_ = {@Autowired}, onParam_ = {@Value("${spring.cloud.stream.bindings.input.destination}")})
-    private String subscription;
+    @Setter(onMethod_ = {@Autowired}, onParam_ = {@Value("${spring.cloud.stream.bindings.input.destination.er}")})
+    private String ERSubscription;
+
+    @Setter(onMethod_ = {@Autowired}, onParam_ = {@Value("${spring.cloud.stream.bindings.input.destination.es}")})
+    private String ESSubscription;
 
     @Setter(onMethod_ = {@Value("${spring.cloud.gcp.project-id}")})
     private String projectId;
 
     @Setter(onMethod_ = {@Autowired})
-    private PubSubMessageReceiver pubSubMessageReceiver;
+    private EventsPubSubMessageReceiver eventsPubSubMessageReceiver;
+
+    @Setter(onMethod_ = {@Autowired})
+    private PipelinePubSubMessageReceiver devicesPipelinePubSubMessageReceiver;
+
+    private PubSubReceiver ERPubSubReceiver;
+    private PubSubReceiver ESPubSubReceiver;
 
     @PostConstruct
     public void startPubSubSubscriber() {
-        log.debug("starting pub-sub subscriber: sub={}", subscription);
-        var subscriptionName = ProjectSubscriptionName.of(projectId, subscription);
+        ERPubSubReceiver = new PubSubReceiver();
+        ERPubSubReceiver.startPubSubSubscriber(ERSubscription, eventsPubSubMessageReceiver, projectId);
 
-        subscriber = Subscriber.newBuilder(subscriptionName, pubSubMessageReceiver).build();
-        try {
-            subscriber.startAsync().awaitRunning(30, SECONDS);
-            log.info("pub-sub subscriber started: sub={}", subscription);
-        } catch (TimeoutException timeoutException) {
-            //after 30s
-            log.error("failed to start pub-sub subscriber", timeoutException);
-            try {
-                subscriber.stopAsync().awaitTerminated(10, SECONDS);
-            } catch (TimeoutException e) {
-                log.error("failed to shutdown pub-sub subscriber", e);
-            }
-        }
+        ESPubSubReceiver = new PubSubReceiver();
+        ESPubSubReceiver.startPubSubSubscriber(ESSubscription, devicesPipelinePubSubMessageReceiver, projectId);
     }
 
     @PreDestroy
     public void shutDownPubSubThreadPull() {
-        if (subscriber != null) {
-            log.info("closing pub-sub subscriber");
-            try {
-                subscriber.stopAsync().awaitTerminated(30, SECONDS);
-            } catch (TimeoutException e) {
-                log.error("failed to shutdown pub-sub subscriber", e);
-            }
-        }
+        ERPubSubReceiver.shutDownPubSubThreadPull();
+        ESPubSubReceiver.shutDownPubSubThreadPull();
     }
 }
