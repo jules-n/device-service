@@ -9,7 +9,11 @@ spring:
     stream:
       bindings:
         input:
-          destination: ${SUBSCRIPTION:device-service-sub}
+          destination:
+             er: ${SUBSCRIPTION:device-service-sub}
+             es:
+               add: ${SUBSCRIPTION:device-pipeline-add-sub}
+               drop: ${SUBSCRIPTION:device-pipeline-drop-sub}
     gcp:
       project-id: ${PROJECT_ID:single-system}
   kafka:

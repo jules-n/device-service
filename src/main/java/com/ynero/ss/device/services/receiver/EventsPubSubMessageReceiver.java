@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Log4j2
-public class PubSubMessageReceiver implements MessageReceiver {
+public class EventsPubSubMessageReceiver implements MessageReceiver {
 
     @Setter(onMethod_ = {@Autowired})
     private DeviceDataCategorizer deviceDataCategorizer;
