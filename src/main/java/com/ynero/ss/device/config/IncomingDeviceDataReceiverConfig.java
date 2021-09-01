@@ -1,7 +1,6 @@
 package com.ynero.ss.device.config;
 
 import com.ynero.ss.device.services.receiver.EventsPubSubMessageReceiver;
-import com.ynero.ss.device.services.receiver.PipelinePubSubMessageReceiver;
 import com.ynero.ss.device.services.receiver.PubSubReceiver;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -14,13 +13,10 @@ import javax.annotation.PreDestroy;
 
 @Configuration
 @Log4j2
-public class PubSubReceiverConfig {
+public class IncomingDeviceDataReceiverConfig {
 
     @Setter(onMethod_ = {@Autowired}, onParam_ = {@Value("${spring.cloud.stream.bindings.input.destination.er}")})
-    private String ERSubscription;
-
-    @Setter(onMethod_ = {@Autowired}, onParam_ = {@Value("${spring.cloud.stream.bindings.input.destination.es}")})
-    private String ESSubscription;
+    private String subscription;
 
     @Setter(onMethod_ = {@Value("${spring.cloud.gcp.project-id}")})
     private String projectId;
@@ -28,24 +24,16 @@ public class PubSubReceiverConfig {
     @Setter(onMethod_ = {@Autowired})
     private EventsPubSubMessageReceiver eventsPubSubMessageReceiver;
 
-    @Setter(onMethod_ = {@Autowired})
-    private PipelinePubSubMessageReceiver devicesPipelinePubSubMessageReceiver;
-
-    private PubSubReceiver ERPubSubReceiver;
-    private PubSubReceiver ESPubSubReceiver;
+    private PubSubReceiver receiver;
 
     @PostConstruct
     public void startPubSubSubscriber() {
-        ERPubSubReceiver = new PubSubReceiver();
-        ERPubSubReceiver.startPubSubSubscriber(ERSubscription, eventsPubSubMessageReceiver, projectId);
-
-        ESPubSubReceiver = new PubSubReceiver();
-        ESPubSubReceiver.startPubSubSubscriber(ESSubscription, devicesPipelinePubSubMessageReceiver, projectId);
+        receiver = new PubSubReceiver();
+        receiver.startPubSubSubscriber(subscription, eventsPubSubMessageReceiver, projectId);
     }
 
     @PreDestroy
     public void shutDownPubSubThreadPull() {
-        ERPubSubReceiver.shutDownPubSubThreadPull();
-        ESPubSubReceiver.shutDownPubSubThreadPull();
+        receiver.shutDownPubSubThreadPull();
     }
 }

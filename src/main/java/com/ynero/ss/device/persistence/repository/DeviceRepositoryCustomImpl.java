@@ -79,4 +79,14 @@ public class DeviceRepositoryCustomImpl implements DeviceRepositoryCustom {
 
         return result.wasAcknowledged();
     }
+
+    @Override
+    public boolean removePipeline(UUID pipelineId){
+        var result = mongoTemplate.updateMulti(
+                new Query(),
+                new Update().pull("ports.0.pipelinesId", pipelineId),
+                Device.COLLECTION_NAME);
+
+        return result.wasAcknowledged();
+    }
 }

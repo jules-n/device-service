@@ -5,6 +5,7 @@ import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.pubsub.v1.PubsubMessage;
 import com.ynero.ss.device.persistence.service.DeviceService;
 import dtos.PipelineDevicesDTO;
+import dtos.PipelineIdDTO;
 import json_converters.DTOToMessageJSONConverter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -15,23 +16,19 @@ import java.util.UUID;
 
 @Log4j2
 @Service
-public class PipelinePubSubMessageReceiver implements MessageReceiver {
+public class PipelineDropPubSubMessageReceiver implements MessageReceiver {
 
     @Setter(onMethod_ = {@Autowired})
     private DeviceService deviceService;
 
     @Setter(onMethod_ = {@Autowired})
-    private DTOToMessageJSONConverter<PipelineDevicesDTO> converter;
+    private DTOToMessageJSONConverter<PipelineIdDTO> converter;
 
     @Override
     public void receiveMessage(PubsubMessage message, AckReplyConsumer consumer) {
         var data = message.getData().toStringUtf8();
-        PipelineDevicesDTO dto = converter.deserialize(data, PipelineDevicesDTO.class);
-        dto.getDeviceIds().forEach(
-                id -> {
-                    deviceService.addPipelineToPort(UUID.fromString(dto.getPipelineId()), dto.getPortName(), UUID.fromString(id));
-                }
-        );
+        PipelineIdDTO dto = converter.deserialize(data, PipelineIdDTO.class);
+        deviceService.removePipeline(dto.getPipelineId());
         log.info(message.getMessageId());
         consumer.ack();
     }

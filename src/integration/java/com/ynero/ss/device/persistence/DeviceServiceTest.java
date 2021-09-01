@@ -2,6 +2,7 @@ package com.ynero.ss.device.persistence;
 
 import com.ynero.ss.device.domain.Device;
 import com.ynero.ss.device.domain.Port;
+import com.ynero.ss.device.persistence.repository.DeviceRepository;
 import com.ynero.ss.device.persistence.service.DeviceService;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.AfterEach;
@@ -44,6 +45,9 @@ public class DeviceServiceTest {
 
     @Autowired
     private DeviceService deviceService;
+
+    @Autowired
+    private DeviceRepository deviceRepository;
 
     @Container
     protected static final MongoDBContainer MONGO_CONTAINER = new MongoDBContainer("mongo:" + MONGO_VERSION);
@@ -183,6 +187,21 @@ public class DeviceServiceTest {
         deviceService.addPipelineToPort(newPipelineId, updatedPort.getName(), updatedDevice.getId());
         var actualPipelinesIdArray = deviceService.getDeviceById(updatedDevice.getId()).getPorts().get(0).getPipelinesId();
         assertThat(actualPipelinesIdArray).isEqualTo(expectedPipelinesIdArray);
+    }
 
+    @Test
+    void removePipelineShouldUpdateAllDevicesWithSpecifiedPipeline() {
+        deviceService.removePipeline(testedPipelineId);
+        var actualDevices = deviceRepository.findAll();
+        actualDevices.forEach(
+                device -> {
+                    device.getPorts().forEach(
+                            port -> {
+                                if(port.getPipelinesId()!=null)
+                                assertThat(port.getPipelinesId()).doesNotContain(testedPipelineId);
+                            }
+                    );
+                }
+        );
     }
 }

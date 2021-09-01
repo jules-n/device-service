@@ -12,4 +12,5 @@ public interface DeviceRepositoryCustom {
     List<Device> getAllRelatedDevicesByPipelinesId(UUID pipelineId);
     Port addPort(Port port, UUID deviceId);
     boolean addPipelineToPort(UUID pipelineId, String portName, UUID deviceId);
+    boolean removePipeline(UUID pipelineId);
 }

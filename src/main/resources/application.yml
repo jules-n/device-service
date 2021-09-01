@@ -11,7 +11,9 @@ spring:
         input:
           destination:
              er: ${SUBSCRIPTION:device-service-sub}
-             es: ${SUBSCRIPTION:device-pipeline-sub}
+             es:
+               add: ${SUBSCRIPTION:device-pipeline-add-sub}
+               drop: ${SUBSCRIPTION:device-pipeline-drop-sub}
     gcp:
       project-id: ${PROJECT_ID:single-system}
   kafka:

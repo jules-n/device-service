@@ -108,4 +108,12 @@ public class DeviceServiceImpl implements DeviceService {
         }
         throw new Exception("Pipeline cant be added");
     }
+
+    @Override
+    public boolean removePipeline(UUID pipelineId) {
+        if(pipelineId!=null){
+            return deviceRepository.removePipeline(pipelineId);
+        }
+        return false;
+    }
 }
