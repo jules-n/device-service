@@ -89,4 +89,14 @@ public class DeviceRepositoryCustomImpl implements DeviceRepositoryCustom {
 
         return result.wasAcknowledged();
     }
+
+    @Override
+    public boolean updateDeviceData(Device device) {
+        Update update = new Update();
+        update.set("tenantId", device.getTenantId());
+        update.set("ports", device.getPorts());
+
+        var result = mongoTemplate.updateFirst(new Query(where("id").is(device.getId())), update, Device.COLLECTION_NAME);
+        return result.wasAcknowledged();
+    }
 }

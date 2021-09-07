@@ -116,4 +116,9 @@ public class DeviceServiceImpl implements DeviceService {
         }
         return false;
     }
+
+    @Override
+    public boolean updateDeviceData(Device device) {
+        return deviceRepository.updateDeviceData(device);
+    }
 }

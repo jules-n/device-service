@@ -16,4 +16,5 @@ public interface DeviceService {
     Port getPort(String portName, UUID deviceId);
     boolean addPipelineToPort(UUID pipelineId, String portName, UUID deviceId);
     boolean removePipeline(UUID pipelineId);
+    boolean updateDeviceData(Device device);
 }
