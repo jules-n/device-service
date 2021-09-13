@@ -3,7 +3,7 @@ package com.ynero.ss.device.services.categorizer;
 import com.ynero.ss.device.domain.Device;
 import com.ynero.ss.device.domain.Port;
 import com.ynero.ss.device.persistence.service.DeviceService;
-import com.ynero.ss.device.services.sender.analytics.DataFromDeviceKafkaSender;
+import com.ynero.ss.device.services.sender.analytics.DataFromDeviceSender;
 import com.ynero.ss.device.services.sender.execution.PipelinesgRPCSender;
 import com.ynero.ss.pipeline.dto.proto.PipelinesMessage;
 import dtos.PortValueDTO;
@@ -17,12 +17,12 @@ import java.util.UUID;
 public class DeviceDataCategorizer {
     private final DeviceService deviceService;
     private final PipelinesgRPCSender pipelinesgRPCSender;
-    private final DataFromDeviceKafkaSender dataFromDeviceKafkaSender;
+    private final DataFromDeviceSender dataFromDeviceSender;
 
-    public DeviceDataCategorizer(DeviceService deviceService, PipelinesgRPCSender pipelinesgRPCSender, DataFromDeviceKafkaSender dataFromDeviceKafkaSender) {
+    public DeviceDataCategorizer(DeviceService deviceService, PipelinesgRPCSender pipelinesgRPCSender, DataFromDeviceSender dataFromDeviceSender) {
         this.deviceService = deviceService;
         this.pipelinesgRPCSender = pipelinesgRPCSender;
-        this.dataFromDeviceKafkaSender = dataFromDeviceKafkaSender;
+        this.dataFromDeviceSender = dataFromDeviceSender;
     }
 
     public void categorize(Device device, Port activePort) {
@@ -35,7 +35,7 @@ public class DeviceDataCategorizer {
                 .portValue(port.getValue())
                 .receivingTime(port.getLastUpdate())
                 .build();
-        dataFromDeviceKafkaSender.produce(portValueDTO);
+        dataFromDeviceSender.produce(portValueDTO);
 
         var pipelinesId = port.getPipelinesId();
         if (pipelinesId == null || pipelinesId.size() == 0) {

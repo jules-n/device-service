@@ -1,5 +1,8 @@
 package com.ynero.ss.device.domain;
 
+import com.mongodb.lang.Nullable;
+import domain.SendingData;
+import domain.SendingParameters;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,4 +24,6 @@ public class Device {
     private UUID id;
     private String tenantId;
     private List<Port> ports;
+    @Nullable
+    private SendingParameters sendingParameters;
 }

@@ -1,3 +1,4 @@
+/*
 package com.ynero.ss.device.config;
 
 import lombok.Setter;
@@ -8,7 +9,7 @@ import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 @Configuration
 public class MongoConfig extends AbstractMongoClientConfiguration {
 
-    @Setter(onMethod_ = {@Value("${spring.data.mongodb.uri.database}")})
+    @Setter(onMethod_ = {@Value("${spring.data.mongodb.database}")})
     private String databaseName;
 
     @Override
@@ -21,3 +22,4 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
         return true;
     }
 }
+*/
