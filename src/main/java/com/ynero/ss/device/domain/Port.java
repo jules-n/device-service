@@ -1,5 +1,8 @@
 package com.ynero.ss.device.domain;
 
+import com.mongodb.lang.Nullable;
+import domain.SendingData;
+import domain.SendingParameters;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,4 +21,6 @@ public class Port {
     private Object value;
     private LocalDateTime lastUpdate;
     private List<UUID> pipelinesId;
+    @Nullable
+    private SendingParameters sendingParameters;
 }

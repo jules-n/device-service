@@ -22,10 +22,11 @@ dependencies {
     implementation "com.jules.ss:proto-files:${project['com.jules.ss.proto-files.version']}"
     implementation 'com.jules.ss:common-dtos:1.0.5'
     implementation 'com.jules.ss:converters:1.0.1'
+    implementation 'com.jules.ss:sending-lib:0.0.1'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-log4j2'
-    implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.0'
+   // implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.0'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '0.7.5'

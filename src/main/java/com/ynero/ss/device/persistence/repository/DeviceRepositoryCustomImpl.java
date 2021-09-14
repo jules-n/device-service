@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -15,8 +16,11 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 public class DeviceRepositoryCustomImpl implements DeviceRepositoryCustom {
 
-    @Autowired
     private MongoTemplate mongoTemplate;
+
+    public DeviceRepositoryCustomImpl(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
     @Override
     public boolean updatePortValue(Port port, UUID deviceId) {
@@ -24,6 +28,8 @@ public class DeviceRepositoryCustomImpl implements DeviceRepositoryCustom {
         update
                 .set("ports.$.value", port.getValue())
                 .set("ports.$.lastUpdate", port.getLastUpdate());
+        if (port.getSendingParameters() != null)
+            update.set("ports.$.sendingParameters", port.getSendingParameters());
 
         final Criteria criteria = new Criteria();
         criteria.andOperator(Criteria.where("id").is(deviceId),
@@ -64,7 +70,7 @@ public class DeviceRepositoryCustomImpl implements DeviceRepositoryCustom {
     }
 
     @Override
-    public boolean addPipelineToPort(UUID pipelineId, String portName, UUID deviceId){
+    public boolean addPipelineToPort(UUID pipelineId, String portName, UUID deviceId) {
         Update update = new Update();
         update.addToSet("ports.$.pipelinesId", pipelineId);
 
@@ -81,7 +87,7 @@ public class DeviceRepositoryCustomImpl implements DeviceRepositoryCustom {
     }
 
     @Override
-    public boolean removePipeline(UUID pipelineId){
+    public boolean removePipeline(UUID pipelineId) {
         var result = mongoTemplate.updateMulti(
                 new Query(),
                 new Update().pull("ports.0.pipelinesId", pipelineId),
@@ -95,6 +101,8 @@ public class DeviceRepositoryCustomImpl implements DeviceRepositoryCustom {
         Update update = new Update();
         update.set("tenantId", device.getTenantId());
         update.set("ports", device.getPorts());
+        if (device.getSendingParameters() != null)
+            update.set("sendingParameters", device.getSendingParameters());
 
         var result = mongoTemplate.updateFirst(new Query(where("id").is(device.getId())), update, Device.COLLECTION_NAME);
         return result.wasAcknowledged();

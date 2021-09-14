@@ -8,15 +8,15 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DataFromDeviceKafkaSender {
+public class DataFromDeviceSender {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final DTOToMessageJSONConverter<PortValueDTO> deviceDTOToMessageJSONConverter;
 
-    @Setter(onMethod_ = {@Value("${spring.kafka.producer.for-save-topic}")})
+    @Setter(onMethod_ = {@Value("${spring.kafka.producer.data-for-save-topic}")})
     private String topic;
 
-    public DataFromDeviceKafkaSender(KafkaTemplate<String, String> kafkaTemplate, DTOToMessageJSONConverter<PortValueDTO> deviceDTOToMessageJSONConverter) {
+    public DataFromDeviceSender(KafkaTemplate<String, String> kafkaTemplate, DTOToMessageJSONConverter<PortValueDTO> deviceDTOToMessageJSONConverter) {
         this.kafkaTemplate = kafkaTemplate;
         this.deviceDTOToMessageJSONConverter = deviceDTOToMessageJSONConverter;
     }
