@@ -3,6 +3,7 @@ package com.ynero.ss.device.services.categorizer;
 import com.ynero.ss.device.domain.Device;
 import com.ynero.ss.device.domain.Port;
 import com.ynero.ss.device.persistence.service.DeviceService;
+import com.ynero.ss.device.services.sender.analytics.DataFromDeviceSender;
 import com.ynero.ss.device.services.sender.execution.PipelinesgRPCSender;
 import com.ynero.ss.pipeline.dto.proto.PipelinesMessage;
 import lombok.extern.log4j.Log4j2;
@@ -40,6 +41,9 @@ class DeviceDataCategorizerTest {
     @Mock
     private PipelinesgRPCSender pipelinesgRPCSender;
 
+    @Mock
+    private DataFromDeviceSender dataFromDeviceSender;
+
     @InjectMocks
     private DeviceDataCategorizer categorizer;
 
@@ -72,7 +76,7 @@ class DeviceDataCategorizerTest {
                 .ports(new ArrayList<Port>(){{add(activePortWithNoPipelines);}})
                 .build();
 
-        // no pipelines
+        // with pipelines
         activePortWithPipelines = Port.builder()
                 .name(activePortName)
                 .lastUpdate(LocalDateTime.now())
@@ -98,19 +102,6 @@ class DeviceDataCategorizerTest {
 
         // then: NO outbound request for pipeline execution is sent
         verify(pipelinesgRPCSender, never()).send(any());
-    }
-
-    @Test
-    @Ignore
-    void categorize_SavesValueOnPort_WhenEventOnPortReceived() {
-        // given: event on port
-        when(deviceService.findOrSave(eq(eventOnPortWithNoPipelines), eq(activePortWithNoPipelines)))
-                .thenReturn(activePortWithNoPipelines);
-        // when: categorize event
-        categorizer.categorize(eventOnPortWithNoPipelines, activePortWithNoPipelines);
-
-        // then: value on port is persisted
-        verify(deviceService, times(1)).updatePortValue(eq(activePortWithNoPipelines), eq(deviceId));
     }
 
     @Test

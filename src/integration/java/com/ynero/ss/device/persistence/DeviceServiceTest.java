@@ -80,22 +80,22 @@ public class DeviceServiceTest {
                                     add(UUID.randomUUID());
                                     add(testedPipelineId);
                                     add(UUID.randomUUID());
-                                }}));
+                                }}, null));
                         add(new Port("humidity", 65,
                                 LocalDateTime.of(2021, 8, 6, 14, 20, 13),
                                 new ArrayList<UUID>() {{
                                     add(UUID.randomUUID());
-                                }}));
+                                }}, null));
                         add(new Port("err", "Bad connection",
                                 LocalDateTime.of(2021, 2, 13, 22, 2, 17),
-                                null));
-                    }}));
+                                null, null));
+                    }}, null));
             add(new Device(UUID.randomUUID(), "MARVEL",
                     new ArrayList<Port>() {{
                         add(new Port("battery", 10,
                                 LocalDateTime.of(2021, 8, 23, 17, 40, 22),
-                                null));
-                    }}));
+                                null, null));
+                    }}, null));
             add(new Device(UUID.randomUUID(), "Subway",
                     new ArrayList<Port>() {{
                         add(new Port("temperature", 39,
@@ -103,21 +103,21 @@ public class DeviceServiceTest {
                                 new ArrayList<UUID>() {{
                                     add(testedPipelineId);
                                     add(UUID.randomUUID());
-                                }}));
+                                }}, null));
                         add(new Port("humidity", 91,
                                 LocalDateTime.of(2021, 8, 16, 15, 22, 15),
                                 new ArrayList<UUID>() {{
                                     add(UUID.randomUUID());
-                                }}));
-                    }}));
+                                }}, null));
+                    }}, null));
             add(new Device(UUID.randomUUID(), "SubWay",
                     new ArrayList<Port>() {{
                         add(new Port("humidity", 77,
                                 LocalDateTime.of(2021, 8, 23, 14, 20, 13),
                                 new ArrayList<UUID>() {{
                                     add(UUID.randomUUID());
-                                }}));
-                    }}));
+                                }}, null));
+                    }}, null));
         }};
 
         for (Device device : devices) {
@@ -135,7 +135,7 @@ public class DeviceServiceTest {
     @Test
     void assertThatNewPortAdded() {
         var idOfFirstDevice = devices.get(0).getId();
-        var newPort = new Port("gps", new Point(11.0f, 15.0f), LocalDateTime.now(), null);
+        var newPort = new Port("gps", new Point(11.0f, 15.0f), LocalDateTime.now(), null, null);
         deviceService.addPort(newPort, idOfFirstDevice);
         var expectedListOfPortsName = deviceService
                 .getDeviceById(idOfFirstDevice)
@@ -169,7 +169,7 @@ public class DeviceServiceTest {
         var newTime = LocalDateTime.now();
         var newPortsData = new Port(updatedPort.getName(), expectedNewValue,
                 LocalDateTime.of(newTime.getYear(), newTime.getMonth(), newTime.getDayOfMonth(), newTime.getHour(), newTime.getMinute(), newTime.getSecond()),
-                updatedPort.getPipelinesId());
+                updatedPort.getPipelinesId(), null);
         deviceService.updatePortValue(newPortsData, updatedDevice.getId());
         var actualPort = deviceService.getDeviceById(updatedDevice.getId()).getPorts().get(0);
         assertThat(actualPort).isEqualTo(newPortsData);
