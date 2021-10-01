@@ -1,5 +1,6 @@
 tenant-id:
   attribute-key: ${TENANT_ID_ATTRIBUTE_KEY:tenant-id}
+
 spring:
   data:
     mongodb:
@@ -32,7 +33,3 @@ execution-service:
   address:
     host: ${EXECUTION_SERVICE_ADDRESS_HOST:localhost}
     port: ${EXECUTION_SERVICE_ADDRESS_PORT:9099}
-management:
-  endpoint:
-    health:
-      show-details: always
