@@ -1,0 +1,118 @@
+Release "deviceservice" has been upgraded. Happy Helming!
+NAME: deviceservice
+LAST DEPLOYED: Wed Sep 29 10:34:10 2021
+NAMESPACE: default
+STATUS: pending-upgrade
+REVISION: 14
+TEST SUITE: None
+USER-SUPPLIED VALUES:
+{}
+
+COMPUTED VALUES:
+deployment:
+  app: device-service-app
+  executionService:
+    address:
+      host: app.singlesys.com/execs
+      port: 9099
+  image:
+    name: gcr.io/single-system-dev/device-service:0.0.1
+  kafka:
+    producer:
+      bootstrap:
+        server: 34.118.39.183:9092
+    topic:
+      forSave: device-data-for-save
+      sendingData:
+        device: device-sending-data
+        port: port-sending-data
+  mongo:
+    database: device-service
+    uri: mongodb://mongo-1.mongo:27017/
+  name: device-service
+  port: 8084
+  projectId: single-system-dev
+  replicaCount: 1
+  subscription:
+    deviceData: data-from-device-sub
+    pipelineAdding: pipeline-adding-sub
+    pipelineDeleting: pipeline-deleting-sub
+  tenant:
+    id:
+      attribute:
+        key: tenant-id
+service:
+  port: 8084
+
+HOOKS:
+MANIFEST:
+---
+# Source: deviceservice/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: device-service-serv
+spec:
+  ports:
+    - port: 8084
+      targetPort: 8084
+      protocol: TCP
+      name: http
+  selector:
+    app: device-service-app
+---
+# Source: deviceservice/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: device-service
+  labels:
+    app: device-service-app
+    workload: device-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: device-service-app
+      workload: device-service
+  template:
+    metadata:
+      labels:
+        app: device-service-app
+        workload: device-service
+    spec:
+      containers:
+        - name: device-service
+          image: gcr.io/single-system-dev/device-service:0.0.1
+          ports:
+            - containerPort: 8084
+          env:
+            - name: TENANT_ID_ATTRIBUTE_KEY
+              value: "tenant-id"
+            - name: MONGODB_URI
+              value: "mongodb://mongo-1.mongo:27017/"
+            - name: MONGODB_DATABASE
+              value: "device-service"
+            - name: DEVICE_DATA_SUBSCRIPTION
+              value: "data-from-device-sub"
+            - name: PIPELINE_ADDING_SUBSCRIPTION
+              value: "pipeline-adding-sub"
+            - name: PIPELINE_DELETING_SUBSCRIPTION
+              value: "pipeline-deleting-sub"
+            - name: PROJECT_ID
+              value: "single-system-dev"
+            - name: KAFKA_PRODUCER_TOPIC_FOR_SAVE
+              value: "device-data-for-save"
+            - name: DEVICE_SENDING_DATA_TOPIC
+              value: "device-sending-data"
+            - name: PORT_SENDING_DATA_TOPIC
+              value: "port-sending-data"
+            - name: KAFKA_PRODUCER_BOOTSTRAP_SERVER
+              value: "34.118.39.183:9092"
+            - name: SERVER_PORT
+              value: "8084"
+            - name: EXECUTION_SERVICE_ADDRESS_HOST
+              value: "app.singlesys.com/execs"
+            - name: EXECUTION_SERVICE_ADDRESS_PORT
+              value: "9099"
+
