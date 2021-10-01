@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.ynero.ss.health.autoconfigure.PubSubAutoConfiguration, \
+com.ynero.ss.health.autoconfigure.KafkaAutoConfiguration
