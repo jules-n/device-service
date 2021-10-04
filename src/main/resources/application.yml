@@ -45,9 +45,3 @@ management:
   info:
     git:
       enabled: true
-info:
-  app:
-    name: device-service
-    java:
-      source: 11
-      target: 11

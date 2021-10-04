@@ -5,9 +5,12 @@ plugins {
     id 'java'
     id "com.google.protobuf" version "0.8.17"
     id "com.gorylenko.gradle-git-properties" version "2.3.1"
+    id "com.palantir.git-version" version "0.12.3"
 }
 
 group = 'com.ynero.ss'
+// TODO: change to version gitVersion()
+// https://github.com/palantir/gradle-git-version
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 targetCompatibility = '11'
@@ -26,7 +29,7 @@ dependencies {
     implementation 'com.jules.ss:common-dtos:1.0.5'
     implementation 'com.jules.ss:converters:1.0.1'
     implementation 'com.jules.ss:sending-lib:0.0.1'
-    implementation 'com.jules.ss:healthchecks:0.0.2'
+    implementation 'com.jules.ss:healthchecks:0.0.3'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-log4j2'
@@ -106,4 +109,8 @@ protobuf {
             grpc {}
         }
     }
+}
+
+springBoot {
+    buildInfo() 
 }
