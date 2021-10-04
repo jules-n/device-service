@@ -17,7 +17,19 @@ spec:
         app: {{.Values.deployment.app}}
         workload: {{.Values.deployment.name}}
     spec:
+      volumes:
+        - name: google-cloud-key
+          secret:
+            secretName: pubsub-key
       containers:
+        - name: subscriber
+          image: gcr.io/google-samples/pubsub-sample:v1
+          volumeMounts:
+            - name: google-cloud-key
+              mountPath: /var/secrets/google
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /var/secrets/google/key.json
         - name: {{.Values.deployment.name}}
           image: {{.Values.deployment.image.name}}
           livenessProbe:
@@ -47,8 +59,8 @@ spec:
             value: "{{ .Values.deployment.kafka.topic.sendingData.device}}"
           - name: PORT_SENDING_DATA_TOPIC
             value: "{{ .Values.deployment.kafka.topic.sendingData.port}}"
-          - name: KAFKA_PRODUCER_BOOTSTRAP_SERVER
-            value: "{{ .Values.deployment.kafka.producer.bootstrap.server}}"
+          - name: KAFKA_BOOTSTRAP_SERVER
+            value: "{{ .Values.deployment.kafka.bootstrap.servers}}"
           - name: SERVER_PORT
             value: "{{ .Values.deployment.port}}"
           - name: EXECUTION_SERVICE_ADDRESS_HOST

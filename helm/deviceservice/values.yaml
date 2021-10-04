@@ -3,7 +3,7 @@ deployment:
   name: device-service
   replicaCount: 1
   image:
-    name: gcr.io/single-system-dev/device-service:0.0.15
+    name: gcr.io/single-system-dev/device-service:0.0.28
   port: 8080
   tenant:
     id:
@@ -19,9 +19,8 @@ deployment:
       sendingData:
         device: device-sending-data
         port: port-sending-data
-    producer:
-      bootstrap:
-        server: 10.8.15.224:9092
+    bootstrap:
+      servers: 10.8.15.224:9092
   executionService:
     address:
       host: app.singlesys.com/execs
@@ -34,4 +33,8 @@ service:
   port: 8080
 management:
   server:
-    port: 8080
+    port: 1022
+  endpoints:
+    web:
+      exposure:
+        include: '*'

@@ -18,11 +18,13 @@ spring:
     gcp:
       project-id: ${PROJECT_ID:single-system}
   kafka:
+    consumer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
     producer:
       data-for-save-topic: ${KAFKA_PRODUCER_TOPIC_FOR_SAVE:device-data-for-save}
       device-sending-data-topic: ${DEVICE_SENDING_DATA_TOPIC:device-sending-data}
       port-sending-data-topic: ${PORT_SENDING_DATA_TOPIC:port-sending-data}
-      bootstrap-servers: ${KAFKA_PRODUCER_BOOTSTRAP_SERVER:kkkk:9092}
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 server:
@@ -40,3 +42,12 @@ management:
     web:
       exposure:
         include: ${ACTUATOR_EXPOSE_ENDPOINTS:*}
+  info:
+    git:
+      enabled: true
+info:
+  app:
+    name: device-service
+    java:
+      source: 11
+      target: 11

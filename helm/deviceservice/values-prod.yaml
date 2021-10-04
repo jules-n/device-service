@@ -1,5 +1,5 @@
 management:
   endpoints:
-    jmx:
+    web:
       exposure:
         include: "health,info"

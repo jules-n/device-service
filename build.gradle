@@ -4,6 +4,7 @@ plugins {
     id 'com.coditory.integration-test' version '1.2.3'
     id 'java'
     id "com.google.protobuf" version "0.8.17"
+    id "com.gorylenko.gradle-git-properties" version "2.3.1"
 }
 
 group = 'com.ynero.ss'
@@ -15,18 +16,17 @@ repositories {
     mavenCentral()
     mavenLocal()
 }
-
+/*processResources {
+    expand(project.properties)
+}*/
 dependencies {
-    implementation group: 'io.grpc', name: 'grpc-services', version: '1.0.3'
-//Thanks for using https://jar-download.com
-
 
     //shared
     implementation "com.jules.ss:proto-files:${project['com.jules.ss.proto-files.version']}"
     implementation 'com.jules.ss:common-dtos:1.0.5'
     implementation 'com.jules.ss:converters:1.0.1'
     implementation 'com.jules.ss:sending-lib:0.0.1'
-    implementation 'com.jules.ss:healthchecks:0.0.1'
+    implementation 'com.jules.ss:healthchecks:0.0.2'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-log4j2'
@@ -91,7 +91,6 @@ tasks.withType(Test) {
         exceptionFormat = "full"
     }
 }
-
 
 protobuf {
     protoc {
