@@ -4,11 +4,12 @@ plugins {
     id 'com.coditory.integration-test' version '1.2.3'
     id 'java'
     id "com.google.protobuf" version "0.8.17"
-    id "com.gorylenko.gradle-git-properties" version "2.3.1"
-}
+    id "com.palantir.git-version" version "0.12.3"
 
+}
 group = 'com.ynero.ss'
-version = '0.0.1-SNAPSHOT'
+version gitVersion()
+version = '0.0.1-SNAPSHOT'+' '+version
 sourceCompatibility = '11'
 targetCompatibility = '11'
 
@@ -16,9 +17,9 @@ repositories {
     mavenCentral()
     mavenLocal()
 }
-/*processResources {
-    expand(project.properties)
-}*/
+springBoot {
+    buildInfo()
+}
 dependencies {
 
     //shared
