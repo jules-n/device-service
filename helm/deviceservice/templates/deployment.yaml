@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.deployment.name}}
+  labels:
+    app: {{.Values.deployment.app}}
+    workload: {{.Values.deployment.name}}
+spec:
+  replicas: {{.Values.deployment.replicaCount}}
+  selector:
+    matchLabels:
+      app: {{.Values.deployment.app}}
+      workload: {{.Values.deployment.name}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.deployment.app}}
+        workload: {{.Values.deployment.name}}
+    spec:
+      volumes:
+        - name: google-cloud-key
+          secret:
+            secretName: pubsub-key
+      containers:
+        - name: subscriber
+          image: gcr.io/google-samples/pubsub-sample:v1
+          volumeMounts:
+            - name: google-cloud-key
+              mountPath: /var/secrets/google
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /var/secrets/google/key.json
+        - name: {{.Values.deployment.name}}
+          image: {{.Values.deployment.image.name}}
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 80
+          ports:
+            - containerPort: {{.Values.deployment.port}}
+          env:
+          - name: TENANT_ID_ATTRIBUTE_KEY
+            value: "{{ .Values.deployment.tenant.id.attribute.key}}"
+          - name: MONGODB_URI
+            value: "{{ .Values.deployment.mongo.uri}}"
+          - name: MONGODB_DATABASE
+            value: "{{ .Values.deployment.mongo.database}}"
+          - name: DEVICE_DATA_SUBSCRIPTION
+            value: "{{ .Values.deployment.subscription.deviceData}}"
+          - name: PIPELINE_ADDING_SUBSCRIPTION
+            value: "{{ .Values.deployment.subscription.pipelineAdding}}"
+          - name: PIPELINE_DELETING_SUBSCRIPTION
+            value: "{{ .Values.deployment.subscription.pipelineDeleting}}"
+          - name: PROJECT_ID
+            value: "{{ .Values.deployment.projectId}}"
+          - name: KAFKA_PRODUCER_TOPIC_FOR_SAVE
+            value: "{{ .Values.deployment.kafka.topic.forSave}}"
+          - name: DEVICE_SENDING_DATA_TOPIC
+            value: "{{ .Values.deployment.kafka.topic.sendingData.device}}"
+          - name: PORT_SENDING_DATA_TOPIC
+            value: "{{ .Values.deployment.kafka.topic.sendingData.port}}"
+          - name: KAFKA_BOOTSTRAP_SERVER
+            value: "{{ .Values.deployment.kafka.bootstrap.servers}}"
+          - name: SERVER_PORT
+            value: "{{ .Values.deployment.port}}"
+          - name: EXECUTION_SERVICE_ADDRESS_HOST
+            value: "{{ .Values.deployment.executionService.address.host}}"
+          - name: EXECUTION_SERVICE_ADDRESS_PORT
+            value: "{{ .Values.deployment.executionService.address.port}}"

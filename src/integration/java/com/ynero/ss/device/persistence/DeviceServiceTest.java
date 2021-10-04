@@ -4,7 +4,6 @@ import com.ynero.ss.device.domain.Device;
 import com.ynero.ss.device.domain.Port;
 import com.ynero.ss.device.persistence.repository.DeviceRepository;
 import com.ynero.ss.device.persistence.service.DeviceService;
-import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +33,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("integration-test")
 @Testcontainers
 @DirtiesContext
-@Log4j2
 public class DeviceServiceTest {
 
     public static final String MONGO_VERSION = "4.4.4";

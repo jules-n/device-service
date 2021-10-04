@@ -1,0 +1,40 @@
+deployment:
+  app: device-service-app
+  name: device-service
+  replicaCount: 1
+  image:
+    name: gcr.io/single-system-dev/device-service:0.0.28
+  port: 8080
+  tenant:
+    id:
+      attribute:
+        key: tenant-id
+  mongo:
+    uri: mongodb://mongo-0.mongo:27017/
+    database: device-service
+  projectId: single-system-dev
+  kafka:
+    topic:
+      forSave: device-data-for-save
+      sendingData:
+        device: device-sending-data
+        port: port-sending-data
+    bootstrap:
+      servers: 10.8.15.224:9092
+  executionService:
+    address:
+      host: app.singlesys.com/execs
+      port: 9099
+  subscription:
+    deviceData: data-from-device-sub
+    pipelineAdding: pipeline-adding-sub
+    pipelineDeleting: pipeline-deleting-sub
+service:
+  port: 8080
+management:
+  server:
+    port: 1022
+  endpoints:
+    web:
+      exposure:
+        include: '*'

@@ -4,10 +4,12 @@ plugins {
     id 'com.coditory.integration-test' version '1.2.3'
     id 'java'
     id "com.google.protobuf" version "0.8.17"
-}
+    id "com.palantir.git-version" version "0.12.3"
 
+}
 group = 'com.ynero.ss'
-version = '0.0.1-SNAPSHOT'
+version gitVersion()
+version = '0.0.1-SNAPSHOT'+' '+version
 sourceCompatibility = '11'
 targetCompatibility = '11'
 
@@ -15,7 +17,9 @@ repositories {
     mavenCentral()
     mavenLocal()
 }
-
+springBoot {
+    buildInfo()
+}
 dependencies {
 
     //shared
@@ -23,10 +27,12 @@ dependencies {
     implementation 'com.jules.ss:common-dtos:1.0.5'
     implementation 'com.jules.ss:converters:1.0.1'
     implementation 'com.jules.ss:sending-lib:0.0.1'
+    implementation 'com.jules.ss:healthchecks:0.0.2'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-log4j2'
-   // implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.0'
+
+    implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.0'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '0.7.5'
@@ -34,6 +40,9 @@ dependencies {
     //pub/sub
     implementation platform('com.google.cloud:libraries-bom:20.9.0')
     implementation 'com.google.cloud:google-cloud-pubsub'
+    implementation 'org.springframework.cloud:spring-cloud-gcp-autoconfigure:1.1.0.RELEASE'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-pubsub', version: '1.2.1.RELEASE'
+
 
     //actuator
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.5.3'
@@ -83,7 +92,6 @@ tasks.withType(Test) {
         exceptionFormat = "full"
     }
 }
-
 
 protobuf {
     protoc {

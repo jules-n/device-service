@@ -1,5 +1,6 @@
 tenant-id:
   attribute-key: ${TENANT_ID_ATTRIBUTE_KEY:tenant-id}
+
 spring:
   data:
     mongodb:
@@ -18,13 +19,11 @@ spring:
     gcp:
       project-id: ${PROJECT_ID:single-system}
   kafka:
-    consumer:
-      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
     producer:
       data-for-save-topic: ${KAFKA_PRODUCER_TOPIC_FOR_SAVE:device-data-for-save}
       device-sending-data-topic: ${DEVICE_SENDING_DATA_TOPIC:device-sending-data}
       port-sending-data-topic: ${PORT_SENDING_DATA_TOPIC:port-sending-data}
-      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
+      bootstrap-servers: ${KAFKA_PRODUCER_BOOTSTRAP_SERVER:localhost:9092}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 server:
@@ -34,14 +33,3 @@ execution-service:
   address:
     host: ${EXECUTION_SERVICE_ADDRESS_HOST:localhost}
     port: ${EXECUTION_SERVICE_ADDRESS_PORT:9099}
-management:
-  endpoint:
-    health:
-      show-details: always
-  endpoints:
-    web:
-      exposure:
-        include: ${ACTUATOR_EXPOSE_ENDPOINTS:*}
-  info:
-    git:
-      enabled: true
