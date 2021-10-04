@@ -20,6 +20,10 @@ spec:
       containers:
         - name: {{.Values.deployment.name}}
           image: {{.Values.deployment.image.name}}
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 80
           ports:
             - containerPort: {{.Values.deployment.port}}
           env:
