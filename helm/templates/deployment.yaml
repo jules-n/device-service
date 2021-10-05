@@ -23,7 +23,7 @@ spec:
             secretName: device-service-sa-key
       containers:
         - name: {{.Values.deployment.name}}
-          image: {{.Values.deployment.image.name}}
+          image: "gcr.io/single-system-dev/device-service:{{.Values.app.version}}"
           livenessProbe:
             httpGet:
               path: /actuator/health
