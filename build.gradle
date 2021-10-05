@@ -109,5 +109,5 @@ protobuf {
 }
 
 bootJar {
-    archiveFileName = project.name
+    archiveFileName = "${project.name}.jar"
 }
