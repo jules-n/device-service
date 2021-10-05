@@ -31,9 +31,9 @@ deployment:
     pipelineDeleting: pipeline-deleting-sub
 service:
   port: 8080
-management:
+actuator:
   server:
-    port: 1022
+    port: 8090
   endpoints:
     web:
       exposure:
