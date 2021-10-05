@@ -17,6 +17,10 @@ spec:
         app: {{.Values.deployment.app}}
         workload: {{.Values.deployment.name}}
     spec:
+      volumes:
+        - name: google-cloud-key
+          secret:
+            secretName: device-service-sa-key
       containers:
         - name: {{.Values.deployment.name}}
           image: {{.Values.deployment.image.name}}
@@ -26,7 +30,12 @@ spec:
               port: 80
           ports:
             - containerPort: {{.Values.deployment.port}}
+          volumeMounts:
+            - name: google-cloud-key
+              mountPath: /var/secrets/google
           env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /var/secrets/google/key.json
             - name: TENANT_ID_ATTRIBUTE_KEY
               value: "{{ .Values.deployment.tenant.id.attribute.key}}"
             - name: MONGODB_URI
