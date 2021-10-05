@@ -67,3 +67,5 @@ spec:
               value: "{{ .Values.deployment.executionService.address.host}}"
             - name: EXECUTION_SERVICE_ADDRESS_PORT
               value: "{{ .Values.deployment.executionService.address.port}}"
+            - name: ACTUATOR_EXPOSE_ENDPOINTS
+              value: "{{ .Values.actuator.endpoints.web.exposure.include}}"
