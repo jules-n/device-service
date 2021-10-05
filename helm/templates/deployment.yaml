@@ -61,7 +61,7 @@ spec:
             - name: SERVER_PORT
               value: "{{ .Values.deployment.port}}"
             - name: ACTUATOR_PORT
-              value: {{.Values.actuator.server.port}}
+              value: "{{ .Values.actuator.server.port}}"
             - name: EXECUTION_SERVICE_ADDRESS_HOST
               value: "{{ .Values.deployment.executionService.address.host}}"
             - name: EXECUTION_SERVICE_ADDRESS_PORT
