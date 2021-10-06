@@ -21,7 +21,7 @@ deployment:
       servers: 10.8.15.224:9092
   executionService:
     address:
-      host: app.singlesys.com/execs
+      host: 10.8.7.76
       port: 9099
   subscription:
     deviceData: data-from-device-sub
