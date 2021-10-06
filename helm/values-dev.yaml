@@ -1,4 +1,4 @@
-management:
+actuator:
   endpoints:
     web:
       exposure:

@@ -45,3 +45,5 @@ management:
   info:
     git:
       enabled: true
+  server:
+    port: ${ACTUATOR_PORT:8090}

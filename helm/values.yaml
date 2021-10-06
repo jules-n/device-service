@@ -2,8 +2,6 @@ deployment:
   app: device-service-app
   name: device-service
   replicaCount: 1
-  image:
-    name: gcr.io/single-system-dev/device-service:0.0.28
   port: 8080
   tenant:
     id:
@@ -31,9 +29,9 @@ deployment:
     pipelineDeleting: pipeline-deleting-sub
 service:
   port: 8080
-management:
+actuator:
   server:
-    port: 1022
+    port: 8090
   endpoints:
     web:
       exposure:
