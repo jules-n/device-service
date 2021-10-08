@@ -61,7 +61,7 @@ public class DeviceDataCategorizer {
             pipelineExecutionReq.setTenantId(device.getTenantId());
         }
         var pipelineQuery = pipelineExecutionReq.build();
-        log.info(pipelineQuery);
+        System.out.println(pipelineQuery);
         pipelinesgRPCSender.send(pipelineQuery);
     }
 }

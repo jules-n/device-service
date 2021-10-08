@@ -27,9 +27,9 @@ public class PipelinesgRPCSender {
                 .build();
         var receiverServiceGrpcBlockingStub = PipelineQueryReceiverServiceGrpc.newBlockingStub(channel);
 
-        log.info(request);
+        System.out.println(request);
         var emptyResult = receiverServiceGrpcBlockingStub.receive(request);
-        log.info(emptyResult);
+        System.out.println(emptyResult);
         channel.shutdownNow();
     }
 }
