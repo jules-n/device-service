@@ -9,6 +9,7 @@ import com.ynero.ss.device.services.sender.devicesender.DeviceSendingDataSender;
 import com.ynero.ss.device.services.sender.devicesender.PortSendingDataSender;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 @Primary
 @Service
+@Log4j2
 public class DeviceServiceImpl implements DeviceService {
 
     @Autowired
@@ -34,7 +36,8 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Device save(Device device) {
         if (device.getId() != null && device.getTenantId() != null) {
-            var isNewDevice = getDeviceById(device.getId()) == null;
+            device = getDeviceById(device.getId());
+            var isNewDevice = device == null;
             if (isNewDevice) {
                 var newDevice = deviceRepository.save(device);
                 deviceSender.send(newDevice);
@@ -50,9 +53,7 @@ public class DeviceServiceImpl implements DeviceService {
     public Port findOrSave(Device device, Port activePort) {
         var deviceId = device.getId();
         var existingDevice = save(device);
-deviceRepository.findAll().forEach(
-        System.out::println
-);
+        log.info(existingDevice);
         String nameOfCurrentPort = activePort.getName();
 
         var existingPort = existingDevice.getPorts().stream()

@@ -28,7 +28,6 @@ public class DeviceDataCategorizer {
     public void categorize(Device device, Port activePort) {
         var port = deviceService.findOrSave(device, activePort);
 
-        log.info(device);
         var portValueDTO = PortValueDTO.builder()
                 .deviceId(device.getId())
                 .tenantId(device.getTenantId())
@@ -63,7 +62,6 @@ public class DeviceDataCategorizer {
             pipelineExecutionReq.setTenantId(device.getTenantId());
         }
         var pipelineQuery = pipelineExecutionReq.build();
-        System.out.println(pipelineQuery);
         pipelinesgRPCSender.send(pipelineQuery);
     }
 }
