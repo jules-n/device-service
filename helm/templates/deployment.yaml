@@ -38,7 +38,6 @@ spec:
           ports:
             - containerPort: {{.Values.deployment.port}}
             - containerPort: {{.Values.actuator.server.port}}
-            - containerPort: 5005
           volumeMounts:
             - name: google-cloud-key
               mountPath: /var/secrets/google

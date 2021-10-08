@@ -50,7 +50,9 @@ public class DeviceServiceImpl implements DeviceService {
     public Port findOrSave(Device device, Port activePort) {
         var deviceId = device.getId();
         var existingDevice = save(device);
-
+deviceRepository.findAll().forEach(
+        System.out::println
+);
         String nameOfCurrentPort = activePort.getName();
 
         var existingPort = existingDevice.getPorts().stream()
