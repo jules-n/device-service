@@ -36,14 +36,14 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Device save(Device device) {
         if (device.getId() != null && device.getTenantId() != null) {
-            device = getDeviceById(device.getId());
-            var isNewDevice = device == null;
+            var dbDevice = getDeviceById(device.getId());
+            var isNewDevice = dbDevice == null;
             if (isNewDevice) {
                 var newDevice = deviceRepository.save(device);
                 deviceSender.send(newDevice);
                 return newDevice;
             }
-            return device;
+            return dbDevice;
         }
         throw new Exception("Not enough data");
     }
