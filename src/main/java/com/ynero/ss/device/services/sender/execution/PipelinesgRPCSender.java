@@ -22,11 +22,12 @@ public class PipelinesgRPCSender {
     private int executionServicePort;
 
     public void send(PipelinesMessage.PipelineQuery request) {
+        log.info("request: {}", request);
         ManagedChannel channel = ManagedChannelBuilder.forAddress(executionServiceHost, executionServicePort)
                 .usePlaintext()
+                .maxRetryAttempts(3)
                 .build();
         var receiverServiceGrpcBlockingStub = PipelineQueryReceiverServiceGrpc.newBlockingStub(channel);
-
         receiverServiceGrpcBlockingStub.receive(request);
         channel.shutdownNow();
     }
