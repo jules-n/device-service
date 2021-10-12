@@ -29,8 +29,13 @@ public class PipelinesgRPCSender {
                 .usePlaintext()
                 .disableRetry()
                 .build();
-        var receiverServiceGrpcBlockingStub = PipelineQueryReceiverServiceGrpc.newBlockingStub(channel);
-        receiverServiceGrpcBlockingStub.withDeadlineAfter(10, TimeUnit.SECONDS).receive(request);
-        channel.shutdownNow();
+        try {
+            var receiverServiceGrpcBlockingStub = PipelineQueryReceiverServiceGrpc.newBlockingStub(channel);
+            receiverServiceGrpcBlockingStub.withDeadlineAfter(10, TimeUnit.SECONDS).receive(request);
+            channel.shutdownNow();
+        } catch (Exception ex) {
+            log.info(ex);
+        }
+
     }
 }
