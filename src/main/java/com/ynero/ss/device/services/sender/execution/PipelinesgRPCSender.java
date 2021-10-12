@@ -11,6 +11,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.TimeUnit;
+
 @Log4j2
 @Service
 public class PipelinesgRPCSender {
@@ -25,10 +27,10 @@ public class PipelinesgRPCSender {
         log.info("request: {}", request);
         ManagedChannel channel = ManagedChannelBuilder.forAddress(executionServiceHost, executionServicePort)
                 .usePlaintext()
-                .maxRetryAttempts(3)
+                .disableRetry()
                 .build();
         var receiverServiceGrpcBlockingStub = PipelineQueryReceiverServiceGrpc.newBlockingStub(channel);
-        receiverServiceGrpcBlockingStub.receive(request);
+        receiverServiceGrpcBlockingStub.withDeadlineAfter(10, TimeUnit.SECONDS).receive(request);
         channel.shutdownNow();
     }
 }

@@ -29,8 +29,8 @@ deployment:
       servers: 10.8.15.224:9092
   executionService:
     address:
-      host: 10.8.7.76
-      port: 9099
+      host: grpc://app.singlesys.com/exec
+      port: 443
   subscription:
     deviceData: data-from-device-sub
     pipelineAdding: pipeline-adding-sub
