@@ -31,10 +31,12 @@ public class PipelinesgRPCSender {
                 .build();
         try {
             var receiverServiceGrpcBlockingStub = PipelineQueryReceiverServiceGrpc.newBlockingStub(channel);
-            receiverServiceGrpcBlockingStub.withDeadlineAfter(10, TimeUnit.SECONDS).receive(request);
-            channel.shutdownNow();
+            var result = receiverServiceGrpcBlockingStub.withDeadlineAfter(10, TimeUnit.SECONDS).receive(request);
+            log.info(result);
         } catch (Exception ex) {
             log.info(ex);
+        }finally {
+            channel.shutdownNow();
         }
 
     }
