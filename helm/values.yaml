@@ -9,8 +9,8 @@ deployment:
         cpu: 100m
         memory: 512Mi
       limits:
-        cpu: 1000m
-        memory: 4Gi
+        cpu: 2000m
+        memory: 6Gi
   tenant:
     id:
       attribute:
@@ -29,8 +29,8 @@ deployment:
       servers: 10.8.15.224:9092
   executionService:
     address:
-      host: app.singlesys.com/exec
-      port: 443
+      host: 10.8.7.76
+      port: 9099
   subscription:
     deviceData: data-from-device-sub
     pipelineAdding: pipeline-adding-sub
