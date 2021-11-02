@@ -5,6 +5,7 @@ plugins {
     id 'java'
     id "com.google.protobuf" version "0.8.17"
     id "com.palantir.git-version" version "0.12.3"
+    id "com.jfrog.artifactory" version '4.24.20'
 
 }
 group = 'com.ynero.ss'
@@ -17,6 +18,14 @@ def tagVersion(){
 repositories {
     mavenCentral()
     mavenLocal()
+    maven {
+        url "http://ss-dev-jenkins:8081/artifactory/ss-artifacts"
+        allowInsecureProtocol true
+        credentials {
+            username = System.getenv('SS_DEV_ARTIFACTORY_USERNAME')
+            password = System.getenv('SS_DEV_ARTIFACTORY_PASSWORD')
+        }
+    }
 }
 springBoot {
     buildInfo()
