@@ -3,6 +3,14 @@ deployment:
   name: device-service
   replicaCount: 1
   port: 8080
+  containers:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 512Mi
+      limits:
+        cpu: 2000m
+        memory: 6Gi
   tenant:
     id:
       attribute:
@@ -36,3 +44,5 @@ actuator:
     web:
       exposure:
         include: '*'
+env:
+  JDK_JAVA_OPTIONS: "-Xmx3584M"

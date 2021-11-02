@@ -24,6 +24,8 @@ public class EventsPubSubMessageReceiver implements MessageReceiver {
     @Override
     public void receiveMessage(PubsubMessage message, AckReplyConsumer consumer) {
         var incomingDeviceData = pubSubMessageToDeviceAdapter.adapt(message);
+        System.out.println(incomingDeviceData);
+        log.info(incomingDeviceData);
         deviceDataCategorizer.categorize(incomingDeviceData.getDevice(), incomingDeviceData.getActivePort());
         consumer.ack();
     }

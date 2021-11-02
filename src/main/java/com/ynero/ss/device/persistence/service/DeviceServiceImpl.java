@@ -9,6 +9,7 @@ import com.ynero.ss.device.services.sender.devicesender.DeviceSendingDataSender;
 import com.ynero.ss.device.services.sender.devicesender.PortSendingDataSender;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 @Primary
 @Service
+@Log4j2
 public class DeviceServiceImpl implements DeviceService {
 
     @Autowired
@@ -34,13 +36,14 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Device save(Device device) {
         if (device.getId() != null && device.getTenantId() != null) {
-            var isNewDevice = getDeviceById(device.getId()) == null;
+            var dbDevice = getDeviceById(device.getId());
+            var isNewDevice = dbDevice == null;
             if (isNewDevice) {
                 var newDevice = deviceRepository.save(device);
                 deviceSender.send(newDevice);
                 return newDevice;
             }
-            return device;
+            return dbDevice;
         }
         throw new Exception("Not enough data");
     }
@@ -50,7 +53,7 @@ public class DeviceServiceImpl implements DeviceService {
     public Port findOrSave(Device device, Port activePort) {
         var deviceId = device.getId();
         var existingDevice = save(device);
-
+        log.info(existingDevice);
         String nameOfCurrentPort = activePort.getName();
 
         var existingPort = existingDevice.getPorts().stream()

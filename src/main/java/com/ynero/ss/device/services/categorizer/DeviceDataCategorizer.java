@@ -38,6 +38,7 @@ public class DeviceDataCategorizer {
         dataFromDeviceSender.produce(portValueDTO);
 
         var pipelinesId = port.getPipelinesId();
+        log.info(pipelinesId);
         if (pipelinesId == null || pipelinesId.size() == 0) {
             return;
         }
