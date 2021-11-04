@@ -25,17 +25,17 @@ public class ModelMapperConfig {
 
     private Converter<DeviceDTO, Device> dtoDeviceToDevice = new AbstractConverter<>() {
         protected Device convert(DeviceDTO dto) {
-            var ports = dto.getPorts().stream()
+            var ports = dto.ports().stream()
                     .map(
                             portDTO -> {
-                                var pipelinesId = portDTO.getPipelinesId().stream()
+                                var pipelinesId = portDTO.pipelinesId().stream()
                                         .map( id -> UUID.fromString(id))
                                         .collect(Collectors.toList());
 
                                 var port = Port.builder()
-                                        .name(portDTO.getName())
+                                        .name(portDTO.name())
                                         .lastUpdate(LocalDateTime.now())
-                                        .value(portDTO.getValue())
+                                        .value(portDTO.value())
                                         .pipelinesId(pipelinesId)
                                         .build();
 
@@ -44,8 +44,8 @@ public class ModelMapperConfig {
                     ).collect(Collectors.toList());
 
             var device = Device.builder()
-                    .id(UUID.fromString(dto.getId()))
-                    .tenantId(dto.getTenantId())
+                    .id(UUID.fromString(dto.id()))
+                    .tenantId(dto.tenantId())
                     .ports(ports)
                     .build();
             return device;
