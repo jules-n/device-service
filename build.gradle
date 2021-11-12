@@ -1,16 +1,17 @@
 plugins {
     id 'org.springframework.boot' version '2.5.3'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'com.coditory.integration-test' version '1.2.3'
     id 'java'
     id "com.google.protobuf" version "0.8.17"
     id "com.palantir.git-version" version "0.12.3"
     id "com.jfrog.artifactory" version '4.24.20'
+    id 'jacoco'
+    id "com.coditory.integration-test" version "1.3.0"
 
 }
 group = 'com.ynero.ss'
-sourceCompatibility = '16'
-targetCompatibility = '16'
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 version = tagVersion()
 def tagVersion(){
     return ['sh', '-c', 'git describe --abbrev=0 --tags'].execute().text.trim()
@@ -101,6 +102,7 @@ tasks.withType(Test) {
         events = ["passed", "failed", "skipped"]
         exceptionFormat = "full"
     }
+    finalizedBy jacocoTestReport
 }
 
 protobuf {
@@ -122,3 +124,13 @@ protobuf {
 bootJar {
     archiveFileName = "${project.name}.jar"
 }
+tasks.check.dependsOn jacocoTestCoverageVerification
+jacocoTestReport {
+    executionData(fileTree(project.buildDir).include("jacoco/*.exec"))
+    reports {
+        xml.enabled = true
+        html.enabled = true
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+}
+

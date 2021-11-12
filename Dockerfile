@@ -1,5 +1,4 @@
-FROM gcr.io/distroless/java:11-debug
-SHELL ["/busybox/sh", "-c"]
+FROM openjdk:17.0.1
 WORKDIR /app
-COPY build/libs/device-service.jar /app
-CMD ["device-service.jar"]
+COPY build/libs/event-receiver.jar /app
+CMD ["java", "event-receiver.jar"]
