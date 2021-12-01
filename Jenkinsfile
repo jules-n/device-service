@@ -60,7 +60,7 @@ pipeline {
         }
         stage('deploy') {
             environment {
-                GCP_ZONE = 'europe-central2-a'
+                GCP_ZONE = 'europe-central2-c'
             }
             steps {
                 script {
@@ -69,7 +69,7 @@ pipeline {
                                 " --key-file=${GC_KEY} --project ${env.GCP_PROJECT_ID}"
                         sh "gcloud container clusters get-credentials ${env.GCP_CLUSTER} --zone " +
                                 "${GCP_ZONE} --project ${env.GCP_PROJECT_ID}"
-                        sh "helm upgrade --set app.version=${env.SERVICE_VERSION} -f " +
+                        sh "helm upgrade --install --set app.version=${env.SERVICE_VERSION} -f " +
                                 "./helm/values-${params.helmValues}.yaml helm " +
                                 "./helm"
                     }
